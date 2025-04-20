@@ -1,0 +1,26 @@
+services:
+  tbs_b_account_db:
+    image: mysql:8.4
+    container_name: tbs-account-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: account_db
+      MYSQL_USER: ${TBS_DB_ACCOUNT_USER}
+      MYSQL_PASSWORD: ${TBS_DB_ACCOUNT_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${TBS_DB_ACCOUNT_ROOT_PASSWORD}
+    ports:
+      - "3310:3306"
+    volumes:
+      - tbs_account_data:/var/lib/mysql
+    networks:
+      - backend
+
+volumes:
+  tbs_account_data:
+
+networks:
+  backend:
+    driver: bridge
+
+
+
