@@ -1,4 +1,7 @@
+using Account.Authentication;
 using Account.Data;
+using JwtLibrary;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,10 +12,11 @@ builder.Services.AddDbContext<AccountDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
 });
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddJwt(builder.Configuration);
+builder.Services.AddSingleton<ITokenGenerator, TokenGenerator>();
 
 var app = builder.Build();
 
@@ -23,6 +27,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseHttpsRedirection();
 
 var summaries = new[]
@@ -30,10 +37,17 @@ var summaries = new[]
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
 
-app.MapGet("/weatherforecast", async (AccountDbContext dbContext) =>
+app.MapPost("/login", (LoginRequest request, ITokenGenerator generator) =>
 {
-    // Например, возьмём первую запись из таблицы Users (или другой)
+    return new
+    {
+        access_token = generator.GenerateAccessToken(Guid.NewGuid().ToString(), request.Email, Guid.NewGuid())
+    };
+});
+app.MapGet("/weatherforecast", async (HttpContext context, AccountDbContext dbContext) =>
+{
     var users = await dbContext.Users.ToListAsync();
+
     var forecast = Enumerable.Range(1, 5).Select(index =>
         new WeatherForecast
         (
@@ -45,6 +59,7 @@ app.MapGet("/weatherforecast", async (AccountDbContext dbContext) =>
         .ToArray();
     return forecast;
 })
+.RequireAuthorization()
 .WithName("GetWeatherForecast")
 .WithOpenApi();
 
