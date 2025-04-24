@@ -7,7 +7,7 @@ namespace Account.Model.Database.Configurations;
 public static class RefreshTokenEntityConfiguration
 {
 
-    public static void Configure(this EntityTypeBuilder<RefreshToken> entity)
+    public static void Configure(this EntityTypeBuilder<RefreshTokenEntity> entity)
     {
         entity.ToTable("refresh_tokens");
 

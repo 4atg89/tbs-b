@@ -1,6 +1,6 @@
 namespace Account.Data.Model;
 
-public class User
+public class UserEntity
 {
     public Guid Id { get; set; }
     public required string Email { get; set; }
@@ -9,5 +9,5 @@ public class User
     public required string Salt { get; set; }
     public DateTime CreatedAt { get; set; }
     public bool IsVerified { get; set; }
-    public required ICollection<RefreshToken> RefreshTokens { get; set; }
+    public ICollection<RefreshTokenEntity>? RefreshTokens { get; set; }
 }

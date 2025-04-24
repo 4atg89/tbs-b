@@ -6,14 +6,14 @@ namespace Account.Data;
 
 public class AccountDbContext(DbContextOptions<AccountDbContext> options) : DbContext(options)
 {
-    public DbSet<User> Users => Set<User>();
+    public DbSet<UserEntity> Users => Set<UserEntity>();
 
-    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<RefreshTokenEntity> RefreshTokens => Set<RefreshTokenEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<User>().Configure();
-        modelBuilder.Entity<RefreshToken>().Configure();
+        modelBuilder.Entity<UserEntity>().Configure();
+        modelBuilder.Entity<RefreshTokenEntity>().Configure();
 
         base.OnModelCreating(modelBuilder);
     }

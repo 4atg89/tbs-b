@@ -8,7 +8,7 @@ namespace Account.Model.Database.Configurations;
 public static class UserEntityConfiguration
 {
     
-    public static void Configure(this EntityTypeBuilder<User> entity)
+    public static void Configure(this EntityTypeBuilder<UserEntity> entity)
     {
         entity.ToTable("users");
 

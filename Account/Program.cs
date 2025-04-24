@@ -1,5 +1,8 @@
+using Account;
 using Account.Authentication;
 using Account.Data;
+using Account.Data.Repository;
+using Account.Services;
 using JwtLibrary;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +19,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddJwt(builder.Configuration);
+builder.Services.AddSingleton(TimeProvider.System);
+builder.Services.AddSingleton<IEncryptor, Encryptor>();
 builder.Services.AddSingleton<ITokenGenerator, TokenGenerator>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -32,11 +41,6 @@ app.UseAuthorization();
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
 app.MapPost("/login", (LoginRequest request, ITokenGenerator generator) =>
 {
     return new
@@ -47,25 +51,12 @@ app.MapPost("/login", (LoginRequest request, ITokenGenerator generator) =>
 app.MapGet("/weatherforecast", async (HttpContext context, AccountDbContext dbContext) =>
 {
     var users = await dbContext.Users.ToListAsync();
-
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)],
-            users.Count
-        ))
-        .ToArray();
-    return forecast;
+    return users;
 })
 .RequireAuthorization()
 .WithName("GetWeatherForecast")
 .WithOpenApi();
 
-app.Run();
+app.MapControllers();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary, int Count)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+app.Run();
