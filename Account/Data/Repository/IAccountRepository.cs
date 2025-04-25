@@ -6,4 +6,6 @@ public interface IAccountRepository
 {
 
     Task<UserEntity> Register(UserEntity model);
+    Task<UserEntity?> GetUserByEmail(string email);
+    
 }

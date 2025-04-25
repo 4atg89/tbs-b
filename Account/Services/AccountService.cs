@@ -2,33 +2,31 @@ using Account.Data.Exceptions;
 using Account.Data.Model;
 using Account.Data.Repository;
 using Account.Dto;
+using Account.Dto.Extensions;
 using Account.Extensions;
 
 namespace Account.Services;
 
 public class AccountService(
     IAccountRepository repository,
+    IUserVerificationService userVerificationService,
     TimeProvider timeProvider,
     IEncryptor encryptor
     ) : IAccountService
 {
-    public async Task<ServiceResult<CodeExpirationDto>> Register(RegistrationRequest request)
+    public async Task<ServiceResult<CodeExpirationResponse>> Register(RegistrationRequest request)
     {
-        var salt = encryptor.GetSalt();
         var createdAt = timeProvider.GetUtcNow();
-        var user = new UserEntity
-        {
-            Email = request.Email,
-            Nickname = request.Nickname,
-            PasswordHash = encryptor.GetHash(request.Password, salt),
-            Salt = salt,
-            CreatedAt = createdAt.UtcDateTime
-        };
-
+        var registrationId = Guid.NewGuid();
+        var user = request.MapRegistrationRequestToUserEntity(encryptor, createdAt.UtcDateTime);
         try
         {
+            //todo do smth with verification
             var result = await repository.Register(user);
-            return new(new CodeExpirationDto { ExpirationTime = createdAt.AddSeconds(300L).UtcDateTime, Id = result.Id });
+            var expiresAt = createdAt.AddSeconds(300L).UtcDateTime;
+            //todo should remove await and start new task inside?
+            await userVerificationService.NotifyUser(registrationId, user.Email, expiresAt);
+            return new(new CodeExpirationResponse { ExpirationTime = expiresAt, Id = registrationId });
         }
         catch (UserAlreadyExists ex)
         {

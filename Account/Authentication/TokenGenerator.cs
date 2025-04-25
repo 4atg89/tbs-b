@@ -10,7 +10,7 @@ namespace Account.Authentication;
 public class TokenGenerator(IOptions<JwtOptions> options) : ITokenGenerator
 {
 
-    public string GenerateAccessToken(string email, string nickname, Guid userId)
+    public string GenerateAccessToken(Guid userId, string email, string nickname)
     {
         //todo recheck that
         var claims = new List<Claim>()
