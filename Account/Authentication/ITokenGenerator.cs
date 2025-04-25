@@ -2,5 +2,5 @@ namespace Account.Authentication;
 
 public interface ITokenGenerator
 {
-    public string GenerateAccessToken(string email, string nickname, Guid userId);
+    public string GenerateAccessToken(Guid userId, string email, string nickname);
 }

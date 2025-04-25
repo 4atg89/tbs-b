@@ -1,11 +1,13 @@
 using Account;
 using Account.Authentication;
 using Account.Data;
+using Account.Data.Model;
 using Account.Data.Repository;
 using Account.Services;
 using JwtLibrary;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +17,11 @@ builder.Services.AddDbContext<AccountDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
 });
 
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+{
+    var configuration = builder.Configuration.GetConnectionString("Redis");
+    return ConnectionMultiplexer.Connect(configuration);
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -24,6 +31,8 @@ builder.Services.AddSingleton<IEncryptor, Encryptor>();
 builder.Services.AddSingleton<ITokenGenerator, TokenGenerator>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<ICodeRepository, CodeRepository>();
+builder.Services.AddScoped<IUserVerificationService, UserVerificationService>();
 
 builder.Services.AddControllers();
 
@@ -41,11 +50,13 @@ app.UseAuthorization();
 
 app.UseHttpsRedirection();
 
-app.MapPost("/login", (LoginRequest request, ITokenGenerator generator) =>
+app.MapPost("/login", async (LoginRequest request, AccountDbContext dbContext) =>
 {
     return new
     {
-        access_token = generator.GenerateAccessToken(Guid.NewGuid().ToString(), request.Email, Guid.NewGuid())
+        // access_token = generator.GenerateAccessToken(Guid.NewGuid().ToString(), request.Email, Guid.NewGuid())
+        ra = await dbContext.Users.ToListAsync()
+
     };
 });
 app.MapGet("/weatherforecast", async (HttpContext context, AccountDbContext dbContext) =>

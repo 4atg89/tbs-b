@@ -15,6 +15,17 @@ services:
     networks:
       - backend
 
+  redis_account:
+    image: redis:7.2
+    container_name: redis-account
+    ports:
+      - "6380:6379"
+    command: >
+      redis-server 
+      --maxmemory 100mb 
+      --maxmemory-policy allkeys-lru
+    restart: unless-stopped
+
 volumes:
   tbs_account_data:
 

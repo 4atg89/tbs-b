@@ -6,5 +6,5 @@ namespace Account.Services;
 public interface IAccountService
 {
     
-    Task<ServiceResult<CodeExpirationDto>> Register(RegistrationRequest request);
+    Task<ServiceResult<CodeExpirationResponse>> Register(RegistrationRequest request);
 }
