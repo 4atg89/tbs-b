@@ -14,6 +14,17 @@ public class AccountService(
     IEncryptor encryptor
     ) : IAccountService
 {
+    public async Task<ServiceResult<CodeExpirationResponse>> Login(LoginRequest request)
+    {
+        var user = await repository.GetUserByEmail(request.Email);
+        if (user == null) return new(ClientErrorType.NotFound, "Email is not registered");
+        if (encryptor.GetHash(request.Password, user.Salt) != user.PasswordHash) return new(ClientErrorType.Unauthorized, "Wrong password or Email!");
+        var registrationId = Guid.NewGuid();
+        var expiresAt = timeProvider.GetUtcNow().AddSeconds(300L).UtcDateTime;
+        await userVerificationService.NotifyUser(registrationId, user.Email, expiresAt);
+        return new(new CodeExpirationResponse { ExpirationTime = expiresAt, Id = registrationId });
+    }
+
     public async Task<ServiceResult<CodeExpirationResponse>> Register(RegistrationRequest request)
     {
         var createdAt = timeProvider.GetUtcNow();
@@ -35,4 +46,13 @@ public class AccountService(
 
     }
 
+    public async Task<ServiceResult<CodeExpirationResponse>> RestorePassword(PasswordRestoringRequest request)
+    {
+        var user = await repository.GetUserByEmail(request.Email);
+        if (user == null) return new(ClientErrorType.NotFound, "Email is not registered");
+        var registrationId = Guid.NewGuid();
+        var expiresAt = timeProvider.GetUtcNow().AddSeconds(300L).UtcDateTime;
+        await userVerificationService.NotifyUser(registrationId, user.Email, expiresAt);
+        return new(new CodeExpirationResponse { ExpirationTime = expiresAt, Id = registrationId });
+    }
 }
