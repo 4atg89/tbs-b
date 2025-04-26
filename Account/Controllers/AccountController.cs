@@ -36,4 +36,20 @@ public class AccountController(
         var result = await userVerificationService.DispatchTokenIfValid(dto.RefreshToken);
         return result.Error?.Map(this) ?? StatusCode(StatusCodes.Status200OK, result.Data);
     }
+
+    [HttpPost]
+    [Route("login")]
+    public async Task<IActionResult> Login([FromBody] LoginRequest dto)
+    {
+        var result = await accountService.Login(dto);
+        return result.Error?.Map(this) ?? StatusCode(StatusCodes.Status200OK, result.Data);
+    }
+
+    [HttpPost]
+    [Route("restore")]
+    public async Task<IActionResult> RestorePassword([FromBody] PasswordRestoringRequest dto)
+    {
+        var result = await accountService.RestorePassword(dto);
+        return result.Error?.Map(this) ?? StatusCode(StatusCodes.Status200OK, result.Data);
+    }
 }
