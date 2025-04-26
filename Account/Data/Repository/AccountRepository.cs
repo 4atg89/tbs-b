@@ -10,6 +10,10 @@ public class AccountRepository(AccountDbContext context) : IAccountRepository
     public async Task<UserEntity?> GetUserByEmail(string email) =>
         await context.Users.SingleOrDefaultAsync(u => u.Email == email);
 
+
+    public async Task<UserEntity?> GetUserById(Guid id) =>
+        await context.Users.SingleOrDefaultAsync(u => u.Id == id);
+
     public async Task<UserEntity> Register(UserEntity user)
     {
         try

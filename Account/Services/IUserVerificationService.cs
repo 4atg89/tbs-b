@@ -10,4 +10,6 @@ public interface IUserVerificationService
 
     Task<ServiceResult<AuthenticatedUserResponse>> VerifyUser(Guid verificationId, string code);
 
+    Task<ServiceResult<AuthenticatedUserResponse>> DispatchTokenIfValid(string refreshToken);
+
 }

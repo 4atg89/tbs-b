@@ -1,5 +1,6 @@
 using Account.Dto;
 using Account.Extensions;
+using Account.Model.Requests;
 using Account.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,6 +26,14 @@ public class AccountController(
     public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmationCodeRequest dto)
     {
         var result = await userVerificationService.VerifyUser(dto.Id, dto.Code);
+        return result.Error?.Map(this) ?? StatusCode(StatusCodes.Status200OK, result.Data);
+    }
+
+    [HttpPost]
+    [Route("refresh")]
+    public async Task<IActionResult> DispatchTokenIfValid([FromBody] RefreshTokenRequest dto)
+    {
+        var result = await userVerificationService.DispatchTokenIfValid(dto.RefreshToken);
         return result.Error?.Map(this) ?? StatusCode(StatusCodes.Status200OK, result.Data);
     }
 }
