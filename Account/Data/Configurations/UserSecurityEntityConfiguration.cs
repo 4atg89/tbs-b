@@ -14,8 +14,6 @@ public static class UserSecurityEntityConfiguration
         entity.HasKey(e => e.JtiId);
         entity.Property(e => e.JtiId).HasColumnName("jti_id");
 
-        entity.Property(e => e.SecurityStamp).HasColumnName("security_stamp").IsRequired();
-
         entity.Property(e => e.ExpiresAt).HasColumnName("expires_at").IsRequired();
 
         entity.Property(e => e.UserId).HasColumnName("user_id").IsRequired();

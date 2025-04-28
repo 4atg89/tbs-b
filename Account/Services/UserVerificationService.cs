@@ -18,7 +18,7 @@ public class UserVerificationService(
         await codeRepository.StoreEmailAndCode(verificationId, email, GenerateFourDigitCode(), expiresAt);
     }
 
-    public async Task<ServiceResult<AuthenticatedUserResponse>> VerifyUser(Guid verificationId, string code)
+    private async Task<ServiceResult<AuthenticatedUserResponse>> VerifyUser(Guid verificationId, string code)
     {
         var email = await codeRepository.FetchAndRemoveEmailAndCode(verificationId, code);
         if (email == null)
@@ -55,4 +55,41 @@ public class UserVerificationService(
     private static string GenerateFourDigitCode() =>
         new Random().Next(0, 10000).ToString("D4");
 
+    public async Task<ServiceResult<AuthenticatedUserResponse>> VerifyRegistration(Guid verificationId, string code)
+    {
+        var email = await codeRepository.FetchAndRemoveEmailAndCode(verificationId, code);
+        if (email == null)
+        {
+            await codeRepository.ValidateAttemptsForFetchingEmailAndCode(verificationId, code);
+            return new(ClientErrorType.NotFound, "Code wasn't verified");
+        }
+
+        //todo if user is null (unexpected think what to do)
+        var jti = Guid.NewGuid();
+        var securityStamp = Guid.NewGuid();
+        var user = await accountRepository.GetUserByEmail(email);
+        var accessToken = tokenGenerator.GenerateAccessToken(user!.Id, user.Email, user.Nickname);
+
+
+        var refreshToken = tokenGenerator.GenerateRefreshToken(jti, user.Id, securityStamp);
+        return new(new AuthenticatedUserResponse { Token = accessToken, RefreshToken = refreshToken });
+    }
+
+    public async Task<ServiceResult<AuthenticatedUserResponse>> VerifyLogin(Guid verificationId, string code)
+    {
+        var email = await codeRepository.FetchAndRemoveEmailAndCode(verificationId, code);
+        if (email == null)
+        {
+            await codeRepository.ValidateAttemptsForFetchingEmailAndCode(verificationId, code);
+            return new(ClientErrorType.NotFound, "Code wasn't verified");
+        }
+
+        //todo if user is null (unexpected think what to do)
+        var user = await accountRepository.GetUserByEmail(email);
+        var accessToken = tokenGenerator.GenerateAccessToken(user!.Id, user.Email, user.Nickname);
+        var jti = Guid.NewGuid();
+        var securityStamp = Guid.NewGuid();
+        var refreshToken = tokenGenerator.GenerateRefreshToken(jti, user.Id, securityStamp);
+        return new(new AuthenticatedUserResponse { Token = accessToken, RefreshToken = refreshToken });
+    }
 }

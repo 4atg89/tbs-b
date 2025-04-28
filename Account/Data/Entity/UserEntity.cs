@@ -7,6 +7,7 @@ public class UserEntity
     public required string Nickname { get; set; }
     public required string PasswordHash { get; set; }
     public required string Salt { get; set; }
+    public required Guid SecurityStamp { get; set; }
     public DateTime CreatedAt { get; set; }
     public bool IsVerified { get; set; }
     public ICollection<UserSecurityEntity>? UserSecurities { get; set; }

@@ -7,5 +7,7 @@ public interface ITokenGenerator
 
     public string GenerateRefreshToken(Guid jti, Guid userId, Guid securityStamp);
 
+    public DateTime GetRefreshTokenExpires();
+
     public UserRefreshModel? GetUserDataIfValid(string refreshToken);
 }

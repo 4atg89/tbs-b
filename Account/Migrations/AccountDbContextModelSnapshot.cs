@@ -66,6 +66,10 @@ namespace Account.Migrations
                         .HasColumnType("varchar(60)")
                         .HasColumnName("salt");
 
+                    b.Property<Guid>("SecurityStamp")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("security_stamp");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
@@ -87,10 +91,6 @@ namespace Account.Migrations
                     b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("expires_at");
-
-                    b.Property<Guid>("SecurityStamp")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("security_stamp");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("char(36)")

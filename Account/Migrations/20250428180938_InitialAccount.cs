@@ -28,6 +28,7 @@ namespace Account.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     salt = table.Column<string>(type: "varchar(60)", maxLength: 60, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    security_stamp = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     is_verified = table.Column<bool>(type: "tinyint(1)", nullable: false, defaultValue: false)
@@ -43,7 +44,6 @@ namespace Account.Migrations
                 columns: table => new
                 {
                     jti_id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    security_stamp = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     expires_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     user_id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
