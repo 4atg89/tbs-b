@@ -2,10 +2,16 @@ namespace Account.Data.Repository;
 
 public interface ICodeRepository
 {
-    Task StoreEmail(Guid verificationId, string email, string code, DateTime expiresAt);
+    Task StoreEmailAndCode(Guid verificationId, string email, string code, DateTime expiresAt);
 
-    Task<string?> FetchAndRemoveEmail(Guid verificationId, string code);
+    Task<string?> FetchAndRemoveEmailAndCode(Guid verificationId, string code);
 
-    Task<int> ValidateAttemptsForFetchingEmail(Guid verificationId, string code);
+    Task ValidateAttemptsForFetchingEmailAndCode(Guid verificationId, string code);
+
+    Task StorePasswordValidation(Guid verificationId, string email, DateTime expiresAt);
+
+    Task<string?> FetchAndRemovePasswordValidation(Guid verificationId);
+
+    Task ValidateAttemptsForFetchingPasswordValidation(Guid verificationId);
 
 }
