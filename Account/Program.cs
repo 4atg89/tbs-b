@@ -1,7 +1,6 @@
 using Account;
 using Account.Authentication;
 using Account.Data;
-using Account.Data.Model;
 using Account.Data.Repository;
 using Account.Services;
 using JwtLibrary;

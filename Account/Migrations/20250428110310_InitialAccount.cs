@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Account.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialAccaunt : Migration
+    public partial class InitialAccount : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -39,20 +39,19 @@ namespace Account.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "refresh_tokens",
+                name: "user_securities",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    token = table.Column<string>(type: "varchar(512)", maxLength: 512, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    expires = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    jti_id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    security_stamp = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    expires_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     user_id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_refresh_tokens", x => x.id);
+                    table.PrimaryKey("PK_user_securities", x => x.jti_id);
                     table.ForeignKey(
-                        name: "FK_refresh_tokens_users_user_id",
+                        name: "FK_user_securities_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
                         principalColumn: "id",
@@ -61,14 +60,13 @@ namespace Account.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_refresh_tokens_expires",
-                table: "refresh_tokens",
-                column: "expires",
-                unique: true);
+                name: "IX_user_securities_expires_at",
+                table: "user_securities",
+                column: "expires_at");
 
             migrationBuilder.CreateIndex(
-                name: "IX_refresh_tokens_user_id",
-                table: "refresh_tokens",
+                name: "IX_user_securities_user_id",
+                table: "user_securities",
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
@@ -88,7 +86,7 @@ namespace Account.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "refresh_tokens");
+                name: "user_securities");
 
             migrationBuilder.DropTable(
                 name: "users");

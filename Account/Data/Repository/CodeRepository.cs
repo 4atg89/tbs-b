@@ -1,4 +1,3 @@
-using Account.Data.Model;
 using StackExchange.Redis;
 
 namespace Account.Data.Repository;

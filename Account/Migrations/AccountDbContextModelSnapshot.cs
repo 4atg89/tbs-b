@@ -22,38 +22,7 @@ namespace Account.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("Account.Data.Model.RefreshToken", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("Expires")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("expires");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("varchar(512)")
-                        .HasColumnName("token");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Expires")
-                        .IsUnique();
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("refresh_tokens", (string)null);
-                });
-
-            modelBuilder.Entity("Account.Data.Model.User", b =>
+            modelBuilder.Entity("Account.Data.Entity.UserEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -108,10 +77,38 @@ namespace Account.Migrations
                     b.ToTable("users", (string)null);
                 });
 
-            modelBuilder.Entity("Account.Data.Model.RefreshToken", b =>
+            modelBuilder.Entity("Account.Data.Entity.UserSecurityEntity", b =>
                 {
-                    b.HasOne("Account.Data.Model.User", "User")
-                        .WithMany("RefreshTokens")
+                    b.Property<Guid>("JtiId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasColumnName("jti_id");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("expires_at");
+
+                    b.Property<Guid>("SecurityStamp")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("security_stamp");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("JtiId");
+
+                    b.HasIndex("ExpiresAt");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("user_securities", (string)null);
+                });
+
+            modelBuilder.Entity("Account.Data.Entity.UserSecurityEntity", b =>
+                {
+                    b.HasOne("Account.Data.Entity.UserEntity", "User")
+                        .WithMany("UserSecurities")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -119,9 +116,9 @@ namespace Account.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Account.Data.Model.User", b =>
+            modelBuilder.Entity("Account.Data.Entity.UserEntity", b =>
                 {
-                    b.Navigation("RefreshTokens");
+                    b.Navigation("UserSecurities");
                 });
 #pragma warning restore 612, 618
         }
