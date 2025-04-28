@@ -47,6 +47,11 @@ public class UserVerificationService(
         return new(new AuthenticatedUserResponse { Token = newAccessToken, RefreshToken = newRefreshToken });
     }
 
+    public Task<ServiceResult<PasswordResetResponse>> VerifyUserCanChangePassword(Guid verificationId, string code)
+    {
+        throw new NotImplementedException();
+    }
+
     private static string GenerateFourDigitCode() =>
         new Random().Next(0, 10000).ToString("D4");
 

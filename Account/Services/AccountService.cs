@@ -13,16 +13,6 @@ public class AccountService(
     IEncryptor encryptor
     ) : IAccountService
 {
-    public async Task<ServiceResult<CodeExpirationResponse>> Login(LoginRequest request)
-    {
-        var user = await repository.GetUserByEmail(request.Email);
-        if (user == null) return new(ClientErrorType.NotFound, "Email is not registered");
-        if (encryptor.GetHash(request.Password, user.Salt) != user.PasswordHash) return new(ClientErrorType.Unauthorized, "Wrong password or Email!");
-        var registrationId = Guid.NewGuid();
-        var expiresAt = timeProvider.GetUtcNow().AddSeconds(300L).UtcDateTime;
-        await userVerificationService.NotifyUser(registrationId, user.Email, expiresAt);
-        return new(new CodeExpirationResponse { ExpirationTime = expiresAt, Id = registrationId });
-    }
 
     public async Task<ServiceResult<CodeExpirationResponse>> Register(RegistrationRequest request)
     {
@@ -45,7 +35,23 @@ public class AccountService(
 
     }
 
-    public async Task<ServiceResult<CodeExpirationResponse>> RestorePassword(PasswordRestoringRequest request)
+    public async Task<ServiceResult<CodeExpirationResponse>> Login(LoginRequest request)
+    {
+        var user = await repository.GetUserByEmail(request.Email);
+        if (user == null) return new(ClientErrorType.NotFound, "Email is not registered");
+        if (encryptor.GetHash(request.Password, user.Salt) != user.PasswordHash) return new(ClientErrorType.Unauthorized, "Wrong password or Email!");
+        var registrationId = Guid.NewGuid();
+        var expiresAt = timeProvider.GetUtcNow().AddSeconds(300L).UtcDateTime;
+        await userVerificationService.NotifyUser(registrationId, user.Email, expiresAt);
+        return new(new CodeExpirationResponse { ExpirationTime = expiresAt, Id = registrationId });
+    }
+
+    public Task<ServiceResult<CodeExpirationResponse>> Logout(string refreshToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<ServiceResult<CodeExpirationResponse>> RestorePassword(ResetPasswordRequest request)
     {
         var user = await repository.GetUserByEmail(request.Email);
         if (user == null) return new(ClientErrorType.NotFound, "Email is not registered");
@@ -53,5 +59,10 @@ public class AccountService(
         var expiresAt = timeProvider.GetUtcNow().AddSeconds(300L).UtcDateTime;
         await userVerificationService.NotifyUser(registrationId, user.Email, expiresAt);
         return new(new CodeExpirationResponse { ExpirationTime = expiresAt, Id = registrationId });
+    }
+
+    public Task<ServiceResult<CodeExpirationResponse>> SetNewPassword(NewPasswordRequest request)
+    {
+        throw new NotImplementedException();
     }
 }

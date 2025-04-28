@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Account.Dto;
 
-public class PasswordRestoringRequest
+public class ResetPasswordRequest
 {
     
     [Required]
