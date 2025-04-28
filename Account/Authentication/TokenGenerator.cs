@@ -10,6 +10,8 @@ namespace Account.Authentication;
 public class TokenGenerator(IOptions<JwtOptions> options) : ITokenGenerator
 {
 
+    private const string SECURITY_STAMP = "SECURITY_STAMP";
+
     public string GenerateAccessToken(Guid userId, string email, string nickname)
     {
         //todo recheck that
@@ -18,7 +20,7 @@ public class TokenGenerator(IOptions<JwtOptions> options) : ITokenGenerator
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new(JwtRegisteredClaimNames.Email, email),
             new(JwtRegisteredClaimNames.UniqueName, nickname),
-            new(JwtRegisteredClaimNames.Sub, userId.ToString()),
+            new(ClaimTypes.NameIdentifier, userId.ToString()),
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Value.AccessSecretPrivate));
@@ -35,12 +37,14 @@ public class TokenGenerator(IOptions<JwtOptions> options) : ITokenGenerator
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public string GenerateRefreshToken(Guid userId)
+
+    public string GenerateRefreshToken(Guid jti, Guid userId, Guid securityStamp)
     {
         var claims = new List<Claim>()
         {
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new(JwtRegisteredClaimNames.Sub, userId.ToString())
+            new(SECURITY_STAMP, securityStamp.ToString()),
+            new(JwtRegisteredClaimNames.Jti, jti.ToString()),
+            new(ClaimTypes.NameIdentifier, userId.ToString())
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Value.RefreshSecretPrivate));
@@ -58,7 +62,7 @@ public class TokenGenerator(IOptions<JwtOptions> options) : ITokenGenerator
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public Guid? GetIdIfValid(string token)
+    public UserRefreshModel? GetUserDataIfValid(string refreshToken)
     {
         var validationParameters = new TokenValidationParameters
         {
@@ -74,24 +78,18 @@ public class TokenGenerator(IOptions<JwtOptions> options) : ITokenGenerator
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();
-
         try
         {
-            var principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
-            var claims = principal.Claims;
-
-            //todo maybe this is better?
-            // var userId1 = principal.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
-            //    ?? principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            // Console.WriteLine($"bla bla {claims.FirstOrDefault(e => e.Type == JwtRegisteredClaimNames.Sub)} {userId1}");
-
-            var userIdClaim = principal.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
-            _ = Guid.TryParse(userIdClaim, out var userId);
-            return userId;
-
+            var principal = tokenHandler.ValidateToken(refreshToken, validationParameters, out SecurityToken validatedToken);
+            var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var jtiClaim = principal.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
+            var securitStampClaim = principal.FindFirst(SECURITY_STAMP)?.Value;
+            if (userIdClaim == null || jtiClaim == null || securitStampClaim == null) return null;
+            return new UserRefreshModel { Id = new Guid(jtiClaim), UserId = new Guid(userIdClaim), SecurityStamp = new Guid(securitStampClaim) };
         }
         catch (Exception ex)
         {
+            //todo remove
             Console.WriteLine("Refresh" + ex.Message);
             Console.WriteLine(ex);
             return null;

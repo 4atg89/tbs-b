@@ -22,8 +22,6 @@ public static class JwtExtensions
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(x =>
             {
-                // todo check if it is better then other solution in token generator
-                JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
                 x.RequireHttpsMetadata = false;
                 x.TokenValidationParameters = new TokenValidationParameters
                 {

@@ -30,19 +30,18 @@ public class UserVerificationService(
         //todo if user is null (unexpected think what to do)
         var user = await accountRepository.GetUserByEmail(email);
         var accessToken = tokenGenerator.GenerateAccessToken(user!.Id, user.Email, user.Nickname);
-        var refreshToken = tokenGenerator.GenerateRefreshToken(user!.Id);
+        var refreshToken = tokenGenerator.GenerateRefreshToken(Guid.NewGuid(), user!.Id, Guid.NewGuid());
         //todo finish with refresh token
         return new(new AuthenticatedUserResponse { Token = accessToken, RefreshToken = refreshToken });
     }
 
     public async Task<ServiceResult<AuthenticatedUserResponse>> DispatchTokenIfValid(string refreshToken)
     {
-        var userId = tokenGenerator.GetIdIfValid(refreshToken);
+        var userId = tokenGenerator.GetUserDataIfValid(refreshToken);
         if (userId == null) return new(ClientErrorType.NotFound, "Refresh token is not valid");
-        //todo why need to parse?
-        var user = await accountRepository.GetUserById((Guid)userId);
+        var user = await accountRepository.GetUserById(userId.UserId);
         var newAccessToken = tokenGenerator.GenerateAccessToken(user!.Id, user.Email, user.Nickname);
-        var newRefreshToken = tokenGenerator.GenerateRefreshToken(user!.Id);
+        var newRefreshToken = tokenGenerator.GenerateRefreshToken(Guid.NewGuid(), user!.Id, Guid.NewGuid());
 
         return new(new AuthenticatedUserResponse { Token = newAccessToken, RefreshToken = newRefreshToken });
     }
