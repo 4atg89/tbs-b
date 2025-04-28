@@ -15,15 +15,15 @@ public class UserVerificationService(
     public async Task NotifyUser(Guid verificationId, string email, DateTime expiresAt)
     {
         //todo send email
-        await codeRepository.StoreEmail(verificationId, email, GenerateFourDigitCode(), expiresAt);
+        await codeRepository.StoreEmailAndCode(verificationId, email, GenerateFourDigitCode(), expiresAt);
     }
 
     public async Task<ServiceResult<AuthenticatedUserResponse>> VerifyUser(Guid verificationId, string code)
     {
-        var email = await codeRepository.FetchAndRemoveEmail(verificationId, code);
+        var email = await codeRepository.FetchAndRemoveEmailAndCode(verificationId, code);
         if (email == null)
         {
-            await codeRepository.ValidateAttemptsForFetchingEmail(verificationId, code);
+            await codeRepository.ValidateAttemptsForFetchingEmailAndCode(verificationId, code);
             return new(ClientErrorType.NotFound, "Code wasn't verified");
         }
 
