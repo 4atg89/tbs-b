@@ -29,4 +29,9 @@ public class AccountRepository(AccountDbContext context) : IAccountRepository
         }
 
     }
+
+    public Task<UserEntity?> SecuredUser(string email, Guid jtiId, DateTime expiresAt)
+    {
+        throw new NotImplementedException();
+    }
 }

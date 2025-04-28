@@ -95,4 +95,10 @@ public class TokenGenerator(IOptions<JwtOptions> options) : ITokenGenerator
             return null;
         }
     }
+
+    public DateTime GetRefreshTokenExpires()
+    {
+        //todo change to timeprovider
+        return DateTime.UtcNow.AddHours(options.Value.RefreshJwtExpirationHours);
+    }
 }

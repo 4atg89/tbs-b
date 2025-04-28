@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Account.Migrations
 {
     [DbContext(typeof(AccountDbContext))]
-    [Migration("20250428110310_InitialAccount")]
+    [Migration("20250428180938_InitialAccount")]
     partial class InitialAccount
     {
         /// <inheritdoc />
@@ -69,6 +69,10 @@ namespace Account.Migrations
                         .HasColumnType("varchar(60)")
                         .HasColumnName("salt");
 
+                    b.Property<Guid>("SecurityStamp")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("security_stamp");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
@@ -90,10 +94,6 @@ namespace Account.Migrations
                     b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("expires_at");
-
-                    b.Property<Guid>("SecurityStamp")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("security_stamp");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("char(36)")

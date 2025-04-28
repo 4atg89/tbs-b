@@ -13,6 +13,7 @@ public static class DtoMappingExtensions
             Nickname = it.Nickname,
             PasswordHash = encryptor.GetHash(it.Password, salt),
             Salt = salt,
+            SecurityStamp = Guid.NewGuid(),
             CreatedAt = createdAt
         };
     }
