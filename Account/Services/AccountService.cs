@@ -1,5 +1,4 @@
 using Account.Data.Exceptions;
-using Account.Data.Model;
 using Account.Data.Repository;
 using Account.Dto;
 using Account.Dto.Extensions;

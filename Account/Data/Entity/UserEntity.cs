@@ -1,4 +1,4 @@
-namespace Account.Data.Model;
+namespace Account.Data.Entity;
 
 public class UserEntity
 {
@@ -9,5 +9,5 @@ public class UserEntity
     public required string Salt { get; set; }
     public DateTime CreatedAt { get; set; }
     public bool IsVerified { get; set; }
-    public ICollection<RefreshTokenEntity>? RefreshTokens { get; set; }
+    public ICollection<UserSecurityEntity>? UserSecurities { get; set; }
 }

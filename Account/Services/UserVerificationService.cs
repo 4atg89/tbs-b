@@ -30,16 +30,17 @@ public class UserVerificationService(
         //todo if user is null (unexpected think what to do)
         var user = await accountRepository.GetUserByEmail(email);
         var accessToken = tokenGenerator.GenerateAccessToken(user!.Id, user.Email, user.Nickname);
-        var refreshToken = tokenGenerator.GenerateRefreshToken(Guid.NewGuid(), user!.Id, Guid.NewGuid());
-        //todo finish with refresh token
+        var jti = Guid.NewGuid();
+        var securityStamp = Guid.NewGuid();
+        var refreshToken = tokenGenerator.GenerateRefreshToken(jti, user.Id, securityStamp);
         return new(new AuthenticatedUserResponse { Token = accessToken, RefreshToken = refreshToken });
     }
 
     public async Task<ServiceResult<AuthenticatedUserResponse>> DispatchTokenIfValid(string refreshToken)
     {
-        var userId = tokenGenerator.GetUserDataIfValid(refreshToken);
-        if (userId == null) return new(ClientErrorType.NotFound, "Refresh token is not valid");
-        var user = await accountRepository.GetUserById(userId.UserId);
+        var refreshModel = tokenGenerator.GetUserDataIfValid(refreshToken);
+        if (refreshModel == null) return new(ClientErrorType.NotFound, "Refresh token is not valid");
+        var user = await accountRepository.GetUserById(refreshModel.UserId);
         var newAccessToken = tokenGenerator.GenerateAccessToken(user!.Id, user.Email, user.Nickname);
         var newRefreshToken = tokenGenerator.GenerateRefreshToken(Guid.NewGuid(), user!.Id, Guid.NewGuid());
 

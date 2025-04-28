@@ -1,5 +1,5 @@
+using Account.Data.Entity;
 using Account.Data.Exceptions;
-using Account.Data.Model;
 using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
 

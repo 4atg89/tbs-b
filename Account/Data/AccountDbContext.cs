@@ -1,4 +1,4 @@
-using Account.Data.Model;
+using Account.Data.Entity;
 using Account.Model.Database.Configurations;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,12 +8,12 @@ public class AccountDbContext(DbContextOptions<AccountDbContext> options) : DbCo
 {
     public DbSet<UserEntity> Users => Set<UserEntity>();
 
-    public DbSet<RefreshTokenEntity> RefreshTokens => Set<RefreshTokenEntity>();
+    public DbSet<UserSecurityEntity> UserSecurities => Set<UserSecurityEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<UserEntity>().Configure();
-        modelBuilder.Entity<RefreshTokenEntity>().Configure();
+        modelBuilder.Entity<UserSecurityEntity>().Configure();
 
         base.OnModelCreating(modelBuilder);
     }

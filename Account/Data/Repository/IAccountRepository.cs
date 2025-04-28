@@ -1,4 +1,4 @@
-using Account.Data.Model;
+using Account.Data.Entity;
 
 namespace Account.Data.Repository;
 
