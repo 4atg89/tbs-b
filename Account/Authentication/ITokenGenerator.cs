@@ -4,6 +4,8 @@ namespace Account.Authentication;
 public interface ITokenGenerator
 {
     public string GenerateAccessToken(Guid userId, string email, string nickname);
-    public string GenerateRefreshToken(Guid userId);
-    public Guid? GetIdIfValid(string token);
+
+    public string GenerateRefreshToken(Guid jti, Guid userId, Guid securityStamp);
+
+    public UserRefreshModel? GetUserDataIfValid(string refreshToken);
 }
