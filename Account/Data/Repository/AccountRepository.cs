@@ -7,11 +7,12 @@ namespace Account.Data.Repository;
 
 public class AccountRepository(AccountDbContext context) : IAccountRepository
 {
-    public async Task<UserEntity?> AuthenticateUser(string email, Guid jtiId, DateTime expiresAt)
+    public async Task<UserEntity?> VerifyUser(string email, Guid jtiId, DateTime expiresAt)
     {
         var user = await GetUserByEmail(email);
         if (user == null) return null;
         context.UserSecurities.Add(UserSecurityCreate(user.Id, jtiId, expiresAt));
+        user.IsVerified = true;
         await context.SaveChangesAsync();
         return user;
     }
@@ -42,7 +43,9 @@ public class AccountRepository(AccountDbContext context) : IAccountRepository
         catch (DbUpdateException ex)
             when (ex.InnerException is MySqlException mysqlEx && mysqlEx.Number == 1062)
         {
-            //todo finish with unverified users
+            var userUnverified = await context.Users.SingleOrDefaultAsync(u => u.Email == user.Email);
+            if (userUnverified != null && !userUnverified.IsVerified) return userUnverified;
+
             throw UserAlreadyExists.From(mysqlEx);
         }
 
@@ -68,4 +71,14 @@ public class AccountRepository(AccountDbContext context) : IAccountRepository
 
     private static UserSecurityEntity UserSecurityCreate(Guid userId, Guid jtiId, DateTime expiresAt) =>
         new() { JtiId = jtiId, UserId = userId, ExpiresAt = expiresAt };
+
+    public async Task SetNewPassword(string email, string salt, string passwordHash)
+    {
+        var user = await GetUserByEmail(email);
+        if (user == null) return;
+        user.Salt = salt;
+        user.PasswordHash = passwordHash;
+        user.SecurityStamp = Guid.NewGuid();
+        await context.SaveChangesAsync();
+    }
 }

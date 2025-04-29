@@ -6,7 +6,7 @@ public class ConfirmationCodeRequest
 {
 
     [Required]
-    public required Guid Id { get; set; }
+    public required Guid VerificationId { get; set; }
 
     [Required]
     [StringLength(maximumLength: 4, MinimumLength = 4, ErrorMessage = "")]

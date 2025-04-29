@@ -101,17 +101,17 @@ public class TokenGenerator(IOptions<JwtOptions> options) : ITokenGenerator
         return DateTime.UtcNow.AddHours(options.Value.RefreshJwtExpirationHours);
     }
 
-    public string GeneratePasswordChangeToken(Guid verificationId)
+    public string GeneratePasswordChangeToken(Guid verificationId, DateTime expiresAt)
     {
 
-        var claims = new List<Claim>() { new(ClaimTypes.NameIdentifier, verificationId.ToString()) };
+        var claims = new List<Claim>() { new(ClaimTypes.NameIdentifier, verificationId.ToString()), };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Value.RefreshSecretPrivate));
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddHours(options.Value.RefreshJwtExpirationHours),
+            Expires = expiresAt,
             Issuer = options.Value.Issuer,
             Audience = options.Value.Audience,
             SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature)
@@ -121,7 +121,7 @@ public class TokenGenerator(IOptions<JwtOptions> options) : ITokenGenerator
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public Guid? GetPasswordChangeDataIfValid(string passwordToken)
+    public Guid? GetPasswordChangeVerificationId(string passwordToken)
     {
         var validationParameters = new TokenValidationParameters
         {

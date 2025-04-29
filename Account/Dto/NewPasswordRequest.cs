@@ -7,6 +7,9 @@ public class NewPasswordRequest
 
     [Required]
     [EmailAddress]
+    public required string Email { get; set; }
+
+    [Required]
     public required string ResetToken { get; set; }
 
     [Required]

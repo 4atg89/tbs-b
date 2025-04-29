@@ -26,7 +26,7 @@ public class AccountController(
     [Route("register/confirm-code")]
     public async Task<IActionResult> ConfirmRegisterEmail([FromBody] ConfirmationCodeRequest dto)
     {
-        var result = await userVerificationService.VerifyUser(dto.Id, dto.Code);
+        var result = await userVerificationService.VerifyUser(dto.VerificationId, dto.Code);
         return result.Error?.Map(this) ?? StatusCode(StatusCodes.Status200OK, result.Data);
     }
 
@@ -42,7 +42,7 @@ public class AccountController(
     [Route("login/confirm-code")]
     public async Task<IActionResult> ConfirmLoginEmail([FromBody] ConfirmationCodeRequest dto)
     {
-        var result = await userVerificationService.VerifyUser(dto.Id, dto.Code);
+        var result = await userVerificationService.VerifyUser(dto.VerificationId, dto.Code);
         return result.Error?.Map(this) ?? StatusCode(StatusCodes.Status200OK, result.Data);
     }
 
@@ -65,9 +65,9 @@ public class AccountController(
 
     [HttpPost]
     [Route("password/restore")]
-    public async Task<IActionResult> RestorePassword([FromBody] ResetPasswordRequest dto)
+    public async Task<IActionResult> RestorePasswordByEmail([FromBody] ResetPasswordRequest dto)
     {
-        var result = await accountService.RestorePassword(dto);
+        var result = await accountService.RestorePasswordByEmail(dto.Email);
         return result.Error?.Map(this) ?? StatusCode(StatusCodes.Status200OK, result.Data);
     }
 
@@ -75,14 +75,13 @@ public class AccountController(
     [Route("password/confirm-code")]
     public async Task<IActionResult> PasswordConfirmEmail([FromBody] ConfirmationCodeRequest dto)
     {
-        //todo wrong method
-        var result = await userVerificationService.VerifyUserCanChangePassword(dto.Id, dto.Code);
+        var result = await userVerificationService.VerifyUserCanChangePassword(dto.VerificationId, dto.Code);
         return result.Error?.Map(this) ?? StatusCode(StatusCodes.Status200OK, result.Data);
     }
 
     [HttpPost]
     [Route("password/change")]
-    public async Task<IActionResult> ConfirmChangePassword([FromBody] NewPasswordRequest dto)
+    public async Task<IActionResult> ChangePassword([FromBody] NewPasswordRequest dto)
     {
         var result = await accountService.SetNewPassword(dto);
         return result.Error?.Map(this) ?? StatusCode(StatusCodes.Status200OK, result.Data);
