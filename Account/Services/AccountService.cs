@@ -1,3 +1,4 @@
+using Account.Authentication;
 using Account.Data.Exceptions;
 using Account.Data.Repository;
 using Account.Dto;
@@ -21,7 +22,6 @@ public class AccountService(
         var user = request.MapRegistrationRequestToUserEntity(encryptor, createdAt.UtcDateTime);
         try
         {
-            //todo do smth with verification
             var result = await repository.Register(user);
             var expiresAt = createdAt.AddSeconds(300L).UtcDateTime;
             //todo should remove await and start new task inside?
@@ -46,9 +46,12 @@ public class AccountService(
         return new(new CodeExpirationResponse { ExpirationTime = expiresAt, Id = registrationId });
     }
 
-    public Task<ServiceResult<CodeExpirationResponse>> Logout(string refreshToken)
+    public async Task<ServiceResult<object>> Logout(string refreshToken)
     {
-        throw new NotImplementedException();
+        var token = userVerificationService.GetUserRefreshModel(refreshToken);
+        if (token == null) return new();
+        await repository.Logout(token.Id);
+        return new();
     }
 
     public async Task<ServiceResult<CodeExpirationResponse>> RestorePassword(ResetPasswordRequest request)

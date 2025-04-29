@@ -58,6 +58,6 @@ public class CodeRepository(
         var key = VerificationPassAttempts(verificationId);
         var result = await _database.StringIncrementAsync(key);
         if (result == 1) await _database.KeyExpireAsync(key, TimeSpan.FromMinutes(5));
-        if (result == 4) await _database.KeyDeleteAsync(VerificationCode(verificationId));
+        if (result == 3) await _database.KeyDeleteAsync(VerificationCode(verificationId));
     }
 }
