@@ -14,35 +14,20 @@ public class UserVerificationService(
 
     public async Task NotifyUser(Guid verificationId, string email, DateTime expiresAt)
     {
+        var code = GenerateFourDigitCode();
         //todo send email
-        await codeRepository.StoreEmailAndCode(verificationId, email, GenerateFourDigitCode(), expiresAt);
+        await codeRepository.StoreEmailAndCode(verificationId, email, code, expiresAt);
     }
 
-    private async Task<ServiceResult<AuthenticatedUserResponse>> VerifyUser(Guid verificationId, string code)
+    public async Task<ServiceResult<AuthenticatedUserResponse>> RefreshToken(string refreshToken)
     {
-        var email = await codeRepository.FetchAndRemoveEmailAndCode(verificationId, code);
-        if (email == null)
-        {
-            await codeRepository.ValidateAttemptsForFetchingEmailAndCode(verificationId, code);
-            return new(ClientErrorType.NotFound, "Code wasn't verified");
-        }
-
-        //todo if user is null (unexpected think what to do)
-        var user = await accountRepository.GetUserByEmail(email);
-        var accessToken = tokenGenerator.GenerateAccessToken(user!.Id, user.Email, user.Nickname);
+        var rm = tokenGenerator.GetUserDataIfValid(refreshToken);
+        if (rm == null) return new(ClientErrorType.NotFound, "Refresh token is not valid");
         var jti = Guid.NewGuid();
-        var securityStamp = Guid.NewGuid();
-        var refreshToken = tokenGenerator.GenerateRefreshToken(jti, user.Id, securityStamp);
-        return new(new AuthenticatedUserResponse { Token = accessToken, RefreshToken = refreshToken });
-    }
-
-    public async Task<ServiceResult<AuthenticatedUserResponse>> DispatchTokenIfValid(string refreshToken)
-    {
-        var refreshModel = tokenGenerator.GetUserDataIfValid(refreshToken);
-        if (refreshModel == null) return new(ClientErrorType.NotFound, "Refresh token is not valid");
-        var user = await accountRepository.GetUserById(refreshModel.UserId);
+        var user = await accountRepository.SecuredUserUpdate(rm.UserId, rm.Id, rm.SecurityStamp, jti, tokenGenerator.GetRefreshTokenExpires());
+        if (user == null) return new(ClientErrorType.NotFound, "Refresh token is not valid");
         var newAccessToken = tokenGenerator.GenerateAccessToken(user!.Id, user.Email, user.Nickname);
-        var newRefreshToken = tokenGenerator.GenerateRefreshToken(Guid.NewGuid(), user!.Id, Guid.NewGuid());
+        var newRefreshToken = tokenGenerator.GenerateRefreshToken(jti, user.Id, user.SecurityStamp);
 
         return new(new AuthenticatedUserResponse { Token = newAccessToken, RefreshToken = newRefreshToken });
     }
@@ -55,7 +40,7 @@ public class UserVerificationService(
     private static string GenerateFourDigitCode() =>
         new Random().Next(0, 10000).ToString("D4");
 
-    public async Task<ServiceResult<AuthenticatedUserResponse>> VerifyRegistration(Guid verificationId, string code)
+    public async Task<ServiceResult<AuthenticatedUserResponse>> VerifyUser(Guid verificationId, string code)
     {
         var email = await codeRepository.FetchAndRemoveEmailAndCode(verificationId, code);
         if (email == null)
@@ -64,32 +49,16 @@ public class UserVerificationService(
             return new(ClientErrorType.NotFound, "Code wasn't verified");
         }
 
-        //todo if user is null (unexpected think what to do)
         var jti = Guid.NewGuid();
-        var securityStamp = Guid.NewGuid();
-        var user = await accountRepository.GetUserByEmail(email);
+        var user = await accountRepository.AuthenticateUser(email, jti, tokenGenerator.GetRefreshTokenExpires());
+        //todo if user is null (unexpected think what to do)
         var accessToken = tokenGenerator.GenerateAccessToken(user!.Id, user.Email, user.Nickname);
-
-
-        var refreshToken = tokenGenerator.GenerateRefreshToken(jti, user.Id, securityStamp);
+        var refreshToken = tokenGenerator.GenerateRefreshToken(jti, user.Id, user.SecurityStamp);
         return new(new AuthenticatedUserResponse { Token = accessToken, RefreshToken = refreshToken });
     }
 
-    public async Task<ServiceResult<AuthenticatedUserResponse>> VerifyLogin(Guid verificationId, string code)
+    public UserRefreshModel? GetUserRefreshModel(string refreshToken)
     {
-        var email = await codeRepository.FetchAndRemoveEmailAndCode(verificationId, code);
-        if (email == null)
-        {
-            await codeRepository.ValidateAttemptsForFetchingEmailAndCode(verificationId, code);
-            return new(ClientErrorType.NotFound, "Code wasn't verified");
-        }
-
-        //todo if user is null (unexpected think what to do)
-        var user = await accountRepository.GetUserByEmail(email);
-        var accessToken = tokenGenerator.GenerateAccessToken(user!.Id, user.Email, user.Nickname);
-        var jti = Guid.NewGuid();
-        var securityStamp = Guid.NewGuid();
-        var refreshToken = tokenGenerator.GenerateRefreshToken(jti, user.Id, securityStamp);
-        return new(new AuthenticatedUserResponse { Token = accessToken, RefreshToken = refreshToken });
+        return tokenGenerator.GetUserDataIfValid(refreshToken);
     }
 }

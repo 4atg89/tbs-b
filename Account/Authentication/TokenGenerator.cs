@@ -37,7 +37,6 @@ public class TokenGenerator(IOptions<JwtOptions> options) : ITokenGenerator
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-
     public string GenerateRefreshToken(Guid jti, Guid userId, Guid securityStamp)
     {
         var claims = new List<Claim>()
@@ -100,5 +99,57 @@ public class TokenGenerator(IOptions<JwtOptions> options) : ITokenGenerator
     {
         //todo change to timeprovider
         return DateTime.UtcNow.AddHours(options.Value.RefreshJwtExpirationHours);
+    }
+
+    public string GeneratePasswordChangeToken(Guid verificationId)
+    {
+
+        var claims = new List<Claim>() { new(ClaimTypes.NameIdentifier, verificationId.ToString()) };
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Value.RefreshSecretPrivate));
+
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(claims),
+            Expires = DateTime.UtcNow.AddHours(options.Value.RefreshJwtExpirationHours),
+            Issuer = options.Value.Issuer,
+            Audience = options.Value.Audience,
+            SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature)
+        };
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public Guid? GetPasswordChangeDataIfValid(string passwordToken)
+    {
+        var validationParameters = new TokenValidationParameters
+        {
+            //todo redo RefreshSecretPrivate
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Value.RefreshSecretPrivate)),
+            ValidIssuer = options.Value.Issuer,
+            ValidAudience = options.Value.Audience,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ClockSkew = TimeSpan.Zero
+        };
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        try
+        {
+            var principal = tokenHandler.ValidateToken(passwordToken, validationParameters, out SecurityToken validatedToken);
+            var verificationId = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (verificationId == null) return null;
+            return new Guid(verificationId);
+        }
+        catch (Exception ex)
+        {
+            //todo remove
+            Console.WriteLine("Refresh" + ex.Message);
+            Console.WriteLine(ex);
+            return null;
+        }
     }
 }

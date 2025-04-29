@@ -26,7 +26,7 @@ public class AccountController(
     [Route("register/confirm-code")]
     public async Task<IActionResult> ConfirmRegisterEmail([FromBody] ConfirmationCodeRequest dto)
     {
-        var result = await userVerificationService.VerifyRegistration(dto.Id, dto.Code);
+        var result = await userVerificationService.VerifyUser(dto.Id, dto.Code);
         return result.Error?.Map(this) ?? StatusCode(StatusCodes.Status200OK, result.Data);
     }
 
@@ -42,7 +42,7 @@ public class AccountController(
     [Route("login/confirm-code")]
     public async Task<IActionResult> ConfirmLoginEmail([FromBody] ConfirmationCodeRequest dto)
     {
-        var result = await userVerificationService.VerifyLogin(dto.Id, dto.Code);
+        var result = await userVerificationService.VerifyUser(dto.Id, dto.Code);
         return result.Error?.Map(this) ?? StatusCode(StatusCodes.Status200OK, result.Data);
     }
 
@@ -59,7 +59,7 @@ public class AccountController(
     [Route("refresh")]
     public async Task<IActionResult> DispatchTokenIfValid([FromBody] RefreshTokenRequest dto)
     {
-        var result = await userVerificationService.DispatchTokenIfValid(dto.RefreshToken);
+        var result = await userVerificationService.RefreshToken(dto.RefreshToken);
         return result.Error?.Map(this) ?? StatusCode(StatusCodes.Status200OK, result.Data);
     }
 
