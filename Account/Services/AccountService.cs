@@ -26,7 +26,7 @@ public class AccountService(
             var expiresAt = createdAt.AddSeconds(300L).UtcDateTime;
             //todo should remove await and start new task inside?
             await userVerificationService.NotifyUser(registrationId, user.Email, expiresAt);
-            return new(new CodeExpirationResponse { ExpirationTime = expiresAt, Id = registrationId });
+            return new(new CodeExpirationResponse { ExpirationTime = expiresAt, VerificationId = registrationId });
         }
         catch (UserAlreadyExists ex)
         {
@@ -38,12 +38,12 @@ public class AccountService(
     public async Task<ServiceResult<CodeExpirationResponse>> Login(LoginRequest request)
     {
         var user = await repository.GetUserByEmail(request.Email);
-        if (user == null) return new(ClientErrorType.NotFound, "Email is not registered");
+        if (user == null || !user.IsVerified) return new(ClientErrorType.NotFound, "Email is not registered");
         if (encryptor.GetHash(request.Password, user.Salt) != user.PasswordHash) return new(ClientErrorType.Unauthorized, "Wrong password or Email!");
         var registrationId = Guid.NewGuid();
         var expiresAt = timeProvider.GetUtcNow().AddSeconds(300L).UtcDateTime;
         await userVerificationService.NotifyUser(registrationId, user.Email, expiresAt);
-        return new(new CodeExpirationResponse { ExpirationTime = expiresAt, Id = registrationId });
+        return new(new CodeExpirationResponse { ExpirationTime = expiresAt, VerificationId = registrationId });
     }
 
     public async Task<ServiceResult<object>> Logout(string refreshToken)
@@ -54,18 +54,24 @@ public class AccountService(
         return new();
     }
 
-    public async Task<ServiceResult<CodeExpirationResponse>> RestorePassword(ResetPasswordRequest request)
+    public async Task<ServiceResult<CodeExpirationResponse>> RestorePasswordByEmail(string email)
     {
-        var user = await repository.GetUserByEmail(request.Email);
-        if (user == null) return new(ClientErrorType.NotFound, "Email is not registered");
+        var user = await repository.GetUserByEmail(email);
+        if (user == null || !user.IsVerified) return new(ClientErrorType.NotFound, "Email is not registered");
         var registrationId = Guid.NewGuid();
         var expiresAt = timeProvider.GetUtcNow().AddSeconds(300L).UtcDateTime;
         await userVerificationService.NotifyUser(registrationId, user.Email, expiresAt);
-        return new(new CodeExpirationResponse { ExpirationTime = expiresAt, Id = registrationId });
+        return new(new CodeExpirationResponse { ExpirationTime = expiresAt, VerificationId = registrationId });
     }
 
-    public Task<ServiceResult<CodeExpirationResponse>> SetNewPassword(NewPasswordRequest request)
+    public async Task<ServiceResult<PasswordChangedResponse>> SetNewPassword(NewPasswordRequest request)
     {
-        throw new NotImplementedException();
+        var isValid = await userVerificationService.IsPasswordTokenValid(request.ResetToken, request.Email);
+        if (!isValid) return new(ClientErrorType.Unauthorized, "Token is not valid");
+        var salt = encryptor.GetSalt();
+        var passwordHash = encryptor.GetHash(request.Password, salt);
+        await repository.SetNewPassword(request.Email, salt, passwordHash);
+        return new(new PasswordChangedResponse { Message = "Password was successfully changed", Success = true });
     }
+
 }
