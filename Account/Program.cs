@@ -18,7 +18,8 @@ builder.Services.AddDbContext<AccountDbContext>(options =>
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
 {
-    var configuration = builder.Configuration.GetConnectionString("Redis");
+    var configuration = builder.Configuration.GetConnectionString("Redis")
+        ?? throw new InvalidOperationException("Redis connection string is missing");
     return ConnectionMultiplexer.Connect(configuration);
 });
 builder.Services.AddEndpointsApiExplorer();
