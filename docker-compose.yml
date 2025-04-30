@@ -1,7 +1,7 @@
 services:
-  tbs_b_account_db:
+  tbs-b-account-db:
     image: mysql:8.4
-    container_name: tbs-account-db
+    container_name: tbs-b-account-db
     restart: always
     environment:
       MYSQL_DATABASE: account_db
@@ -15,16 +15,36 @@ services:
     networks:
       - backend
 
-  redis_account:
+  tbs-b-redis-account:
     image: redis:7.2
-    container_name: redis-account
+    container_name:  tbs-b-redis-account
     ports:
       - "6380:6379"
     command: >
       redis-server 
       --maxmemory 100mb 
       --maxmemory-policy allkeys-lru
+      --bind 0.0.0.0
     restart: unless-stopped
+    networks:
+      - backend
+  tbs-b-account-service:
+    build:
+      context: .
+      dockerfile: Account/Dockerfile
+    container_name:  tbs-b-account-service
+    depends_on:
+      - tbs-b-account-db
+      - tbs-b-redis-account
+    ports:
+      - "5030:5030"
+    networks:
+      - backend
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5030
+      - ConnectionStrings__DefaultConnection=${TBS_DB_ACCOUNT_CONNECTION_STRING}
+      - ConnectionStrings__Redis=${TBS_DB_ACCOUNT_REDIS}
 
 volumes:
   tbs_account_data:
