@@ -1,7 +1,6 @@
 namespace Account.Authentication;
 
-//todo rename
-public interface ITokenGenerator
+public interface ITokenService
 {
     public string GenerateAccessToken(Guid userId, string email, string nickname);
     public string GenerateRefreshToken(Guid jti, Guid userId, Guid securityStamp);

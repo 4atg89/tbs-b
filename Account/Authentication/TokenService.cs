@@ -7,14 +7,13 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Account.Authentication;
 
-public class TokenGenerator(IOptions<JwtOptions> options) : ITokenGenerator
+public class TokenService(IOptions<JwtOptions> options) : ITokenService
 {
 
     private const string SECURITY_STAMP = "SECURITY_STAMP";
 
     public string GenerateAccessToken(Guid userId, string email, string nickname)
     {
-        //todo recheck that
         var claims = new List<Claim>()
         {
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
@@ -86,11 +85,8 @@ public class TokenGenerator(IOptions<JwtOptions> options) : ITokenGenerator
             if (userIdClaim == null || jtiClaim == null || securitStampClaim == null) return null;
             return new UserRefreshModel { Id = new Guid(jtiClaim), UserId = new Guid(userIdClaim), SecurityStamp = new Guid(securitStampClaim) };
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            //todo remove
-            Console.WriteLine("Refresh" + ex.Message);
-            Console.WriteLine(ex);
             return null;
         }
     }
@@ -144,11 +140,8 @@ public class TokenGenerator(IOptions<JwtOptions> options) : ITokenGenerator
             if (verificationId == null) return null;
             return new Guid(verificationId);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            //todo remove
-            Console.WriteLine("Refresh" + ex.Message);
-            Console.WriteLine(ex);
             return null;
         }
     }
