@@ -27,11 +27,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddJwt(builder.Configuration);
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddSingleton<IEncryptor, Encryptor>();
-builder.Services.AddSingleton<ITokenGenerator, TokenGenerator>();
-builder.Services.AddScoped<IAccountService, AccountService>();
-builder.Services.AddScoped<IAccountRepository, AccountRepository>();
-builder.Services.AddScoped<ICodeRepository, CodeRepository>();
-builder.Services.AddScoped<IUserVerificationService, UserVerificationService>();
+builder.Services.AddSingleton<ITokenService, TokenService>();
+builder.Services.AddSingleton<IAccountService, AccountService>();
+builder.Services.AddSingleton<IAccountRepository, AccountRepository>();
+builder.Services.AddSingleton<ICodeRepository, CodeRepository>();
+builder.Services.AddSingleton<IUserVerificationService, UserVerificationService>();
 
 builder.Services.AddControllers();
 

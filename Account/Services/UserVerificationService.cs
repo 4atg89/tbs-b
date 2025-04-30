@@ -8,7 +8,7 @@ namespace Account.Services;
 public class UserVerificationService(
     ICodeRepository codeRepository,
     IAccountRepository accountRepository,
-    ITokenGenerator tokenGenerator
+    ITokenService tokenGenerator
 ) : IUserVerificationService
 {
 
@@ -61,7 +61,7 @@ public class UserVerificationService(
 
         var jti = Guid.NewGuid();
         var user = await accountRepository.VerifyUser(email, jti, tokenGenerator.GetRefreshTokenExpires());
-        //todo if user is null (unexpected think what to do)
+        //todo if user is null (unexpected think what to do - logger)
         var accessToken = tokenGenerator.GenerateAccessToken(user!.Id, user.Email, user.Nickname);
         var refreshToken = tokenGenerator.GenerateRefreshToken(jti, user.Id, user.SecurityStamp);
         return new(new AuthenticatedUserResponse { Token = accessToken, RefreshToken = refreshToken });
