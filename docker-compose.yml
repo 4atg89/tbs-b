@@ -1,23 +1,23 @@
 services:
-  tbs-b-account-db:
+  tbs-b-auth-db:
     image: mysql:8.4
-    container_name: tbs-b-account-db
+    container_name: tbs-b-auth-db
     restart: always
     environment:
-      MYSQL_DATABASE: account_db
+      MYSQL_DATABASE: auth_db
       MYSQL_USER: ${TBS_DB_ACCOUNT_USER}
       MYSQL_PASSWORD: ${TBS_DB_ACCOUNT_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${TBS_DB_ACCOUNT_ROOT_PASSWORD}
     ports:
       - "3310:3306"
     volumes:
-      - tbs_account_data:/var/lib/mysql
+      - tbs_auth_data:/var/lib/mysql
     networks:
       - backend
 
-  tbs-b-redis-account:
+  tbs-b-redis-auth:
     image: redis:7.2
-    container_name:  tbs-b-redis-account
+    container_name:  tbs-b-redis-auth
     ports:
       - "6380:6379"
     command: >
@@ -28,14 +28,14 @@ services:
     restart: unless-stopped
     networks:
       - backend
-  tbs-b-account-service:
+  tbs-b-auth-service:
     build:
       context: .
-      dockerfile: Account/Dockerfile
-    container_name:  tbs-b-account-service
+      dockerfile: Auth/Dockerfile
+    container_name:  tbs-b-auth-service
     depends_on:
-      - tbs-b-account-db
-      - tbs-b-redis-account
+      - tbs-b-auth-db
+      - tbs-b-redis-auth
     ports:
       - "5030:5030"
     networks:
@@ -47,7 +47,7 @@ services:
       - ConnectionStrings__Redis=${TBS_DB_ACCOUNT_REDIS}
 
 volumes:
-  tbs_account_data:
+  tbs_auth_data:
 
 networks:
   backend:
