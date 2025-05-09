@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option csharp_namespace = "ProfileContracts.Profile";
+
+service ProfileService {
+  rpc CreateProfile (CreateProfileRequest) returns (CreateProfileResponse);
+}
+
+message CreateProfileRequest {
+  string user_id = 1;
+  string nickname = 2;
+}
+
+message CreateProfileResponse {
+  bool success = 1;
+}

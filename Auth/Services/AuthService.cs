@@ -1,4 +1,3 @@
-using Auth.Authentication;
 using Auth.Data.Exceptions;
 using Auth.Data.Repository;
 using Auth.Dto;
