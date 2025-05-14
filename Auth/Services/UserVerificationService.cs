@@ -2,14 +2,12 @@ using Auth.Authentication;
 using Auth.Data.Repository;
 using Auth.Dto;
 using Auth.Extensions;
-using Auth.GrpcClient;
 
 namespace Auth.Services;
 
 public class UserVerificationService(
     ICodeRepository codeRepository,
     IAuthRepository authRepository,
-    IUserGrpcProfileService userGrpcProfileService,
     ITokenService tokenGenerator
 ) : IUserVerificationService
 {
@@ -66,7 +64,6 @@ public class UserVerificationService(
         //todo if user is null (unexpected think what to do - logger)
         var accessToken = tokenGenerator.GenerateAccessToken(user!.Id, user.Email, user.Nickname);
         var refreshToken = tokenGenerator.GenerateRefreshToken(jti, user.Id, user.SecurityStamp);
-        // await userGrpcProfileService.RegisterUserAsync(user.Id.ToString(), user.Nickname);
         return new(new AuthenticatedUserResponse { Token = accessToken, RefreshToken = refreshToken });
     }
 

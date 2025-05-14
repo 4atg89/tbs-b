@@ -2,7 +2,6 @@ using Auth;
 using Auth.Authentication;
 using Auth.Data;
 using Auth.Data.Repository;
-using Auth.GrpcClient;
 using Auth.Services;
 using JwtLibrary;
 using Microsoft.AspNetCore.Identity.Data;
@@ -42,14 +41,8 @@ builder.Services.AddSingleton<IAuthService, AuthService>();
 builder.Services.AddSingleton<IAuthRepository, AuthRepository>();
 builder.Services.AddSingleton<ICodeRepository, CodeRepository>();
 builder.Services.AddSingleton<IUserVerificationService, UserVerificationService>();
-builder.Services.AddSingleton<IUserGrpcProfileService, UserGrpcProfileService>();
 
 builder.Services.AddControllers();
-builder.Services.AddGrpcClient<ProfileContracts.Profile.ProfileService.ProfileServiceClient>(o =>
-{
-    o.Address = new Uri("http://localhost:5031");
-});
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

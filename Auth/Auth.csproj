@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\JwtLibrary\JwtLibrary.csproj" />
-    <ProjectReference Include="..\ProfileContracts\ProfileContracts.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,20 +1,8 @@
-using Profile.GrpcService;
-
 var builder = WebApplication.CreateBuilder(args);
-
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.ListenLocalhost(5031, listenOptions =>
-    {
-        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
-    });
-});
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-
-builder.Services.AddGrpc();
 
 var app = builder.Build();
 
@@ -45,7 +33,6 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast");
 
-app.MapGrpcService<ProfileServiceImpl>();
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
