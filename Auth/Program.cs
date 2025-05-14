@@ -19,7 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 //     });
 // });
 
-builder.Services.AddDbContext<AuthDbContext>(options =>
+builder.Services.AddDbContextFactory<AuthDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
@@ -62,7 +62,7 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.MapPost("/login", async (LoginRequest request, AuthDbContext dbContext) =>
 {
