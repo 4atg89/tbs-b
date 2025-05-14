@@ -5,20 +5,18 @@ using MySqlConnector;
 
 namespace Auth.Data.Repository;
 
-public class AuthRepository(IServiceProvider _serviceProvider) : IAuthRepository
+public class AuthRepository(IDbContextFactory<AuthDbContext> dbContextFactory) : IAuthRepository
 {
 
     public async Task<T> ExecuteAsync<T>(Func<AuthDbContext, Task<T>> action)
     {
-        using var scope = _serviceProvider.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
+        var context = await dbContextFactory.CreateDbContextAsync();
         return await action(context);
     }
 
     public async Task ExecuteAsync(Func<AuthDbContext, Task> action)
     {
-        using var scope = _serviceProvider.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
+        var context = await dbContextFactory.CreateDbContextAsync();
         await action(context);
     }
 
