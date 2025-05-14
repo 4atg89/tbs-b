@@ -1,13 +1,18 @@
 using ProfileContracts.Profile;
+using static ProfileContracts.Profile.ProfileService;
 
-namespace Auth.GrpcClient;
+namespace ProfileContracts;
 
-public class UserGrpcProfileService: IUserGrpcProfileService
+// add where required
+// builder.Services.AddGrpcClient<ProfileContracts.Profile.ProfileService.ProfileServiceClient>(o =>
+// {
+//     o.Address = new Uri("http://localhost:5031");
+// });
+public class UserGrpcProfileService : IUserGrpcProfileService
 {
+private readonly ProfileServiceClient _profileClient;
 
-    private readonly ProfileService.ProfileServiceClient _profileClient;
-
-    public UserGrpcProfileService(ProfileService.ProfileServiceClient profileClient)
+    public UserGrpcProfileService(ProfileServiceClient profileClient)
     {
         _profileClient = profileClient;
     }
