@@ -5,9 +5,9 @@ services:
     restart: always
     environment:
       MYSQL_DATABASE: auth_db
-      MYSQL_USER: ${TBS_DB_ACCOUNT_USER}
-      MYSQL_PASSWORD: ${TBS_DB_ACCOUNT_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${TBS_DB_ACCOUNT_ROOT_PASSWORD}
+      MYSQL_USER: ${TBS_DB_AUTH_USER}
+      MYSQL_PASSWORD: ${TBS_DB_AUTH_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${TBS_DB_AUTH_ROOT_PASSWORD}
     ports:
       - "3310:3306"
     volumes:
@@ -15,9 +15,25 @@ services:
     networks:
       - backend
 
-  tbs-b-redis-auth:
+  tbs-b-profile-db:
+    image: mysql:8.4
+    container_name: tbs-b-profile-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: profile_db
+      MYSQL_USER: ${TBS_DB_PROFILE_USER}
+      MYSQL_PASSWORD: ${TBS_DB_PROFILE_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${TBS_DB_PROFILE_ROOT_PASSWORD}
+    ports:
+      - "3311:3306"
+    volumes:
+      - tbs_profile_data:/var/lib/mysql
+    networks:
+      - backend
+
+  tbs-b-redis:
     image: redis:7.2
-    container_name:  tbs-b-redis-auth
+    container_name:  tbs-b-redis
     ports:
       - "6380:6379"
     command: >
@@ -35,7 +51,7 @@ services:
     container_name:  tbs-b-auth-service
     depends_on:
       - tbs-b-auth-db
-      - tbs-b-redis-auth
+      - tbs-b-redis
     ports:
       - "5030:5030"
     networks:
@@ -43,11 +59,12 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:5030
-      - ConnectionStrings__DefaultConnection=${TBS_DB_ACCOUNT_CONNECTION_STRING}
-      - ConnectionStrings__Redis=${TBS_DB_ACCOUNT_REDIS}
+      - ConnectionStrings__DefaultConnection=${TBS_DB_AUTH_CONNECTION_STRING}
+      - ConnectionStrings__Redis=${TBS_DB_REDIS}
 
 volumes:
   tbs_auth_data:
+  tbs_profile_data:
 
 networks:
   backend:
