@@ -1,33 +1,15 @@
 services:
-  tbs-b-auth-db:
+  tbs-b-db:
     image: mysql:8.4
-    container_name: tbs-b-auth-db
+    container_name: tbs-b-db
     restart: always
     environment:
-      MYSQL_DATABASE: auth_db
-      MYSQL_USER: ${TBS_DB_AUTH_USER}
-      MYSQL_PASSWORD: ${TBS_DB_AUTH_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${TBS_DB_AUTH_ROOT_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${TBS_DB_ROOT_PASSWORD}
     ports:
       - "3310:3306"
     volumes:
-      - tbs_auth_data:/var/lib/mysql
-    networks:
-      - backend
-
-  tbs-b-profile-db:
-    image: mysql:8.4
-    container_name: tbs-b-profile-db
-    restart: always
-    environment:
-      MYSQL_DATABASE: profile_db
-      MYSQL_USER: ${TBS_DB_PROFILE_USER}
-      MYSQL_PASSWORD: ${TBS_DB_PROFILE_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${TBS_DB_PROFILE_ROOT_PASSWORD}
-    ports:
-      - "3311:3306"
-    volumes:
-      - tbs_profile_data:/var/lib/mysql
+      - tbs_data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
     networks:
       - backend
 
@@ -44,13 +26,14 @@ services:
     restart: unless-stopped
     networks:
       - backend
+
   tbs-b-auth-service:
     build:
       context: .
       dockerfile: Auth/Dockerfile
     container_name:  tbs-b-auth-service
     depends_on:
-      - tbs-b-auth-db
+      - tbs-b-db
       - tbs-b-redis
     ports:
       - "5030:5030"
@@ -63,8 +46,7 @@ services:
       - ConnectionStrings__Redis=${TBS_DB_REDIS}
 
 volumes:
-  tbs_auth_data:
-  tbs_profile_data:
+  tbs_data:
 
 networks:
   backend:
