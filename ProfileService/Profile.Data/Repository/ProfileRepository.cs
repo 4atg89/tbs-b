@@ -1,6 +1,6 @@
 using Profile.Domain.Repository;
 
-namespace Profile.Infrastructure.Repository;
+namespace Profile.Data.Repository;
 
 internal class ProfileRepository : IProfileRepository
 {

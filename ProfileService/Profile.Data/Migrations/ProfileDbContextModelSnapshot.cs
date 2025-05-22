@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Profile.Infrastructure.Data;
+using Profile.Data.Data;
 
 #nullable disable
 
-namespace Profile.Infrastructure.Migrations
+namespace Profile.Data.Migrations
 {
     [DbContext(typeof(ProfileDbContext))]
     partial class ProfileDbContextModelSnapshot : ModelSnapshot
@@ -22,7 +22,7 @@ namespace Profile.Infrastructure.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("Profile.Infrastructure.Entities.HeroEntity", b =>
+            modelBuilder.Entity("Profile.Data.Data.Entities.HeroEntity", b =>
                 {
                     b.Property<Guid>("ProfileId")
                         .HasColumnType("char(36)")
@@ -41,7 +41,7 @@ namespace Profile.Infrastructure.Migrations
                     b.ToTable("profile_heroes", (string)null);
                 });
 
-            modelBuilder.Entity("Profile.Infrastructure.Entities.ProfileEntity", b =>
+            modelBuilder.Entity("Profile.Data.Data.Entities.ProfileEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -100,7 +100,7 @@ namespace Profile.Infrastructure.Migrations
                     b.ToTable("profiles", (string)null);
                 });
 
-            modelBuilder.Entity("Profile.Infrastructure.Entities.ProfileHandHeroesEntity", b =>
+            modelBuilder.Entity("Profile.Data.Data.Entities.ProfileHandHeroesEntity", b =>
                 {
                     b.Property<Guid>("ProfileId")
                         .HasColumnType("char(36)")
@@ -121,9 +121,9 @@ namespace Profile.Infrastructure.Migrations
                     b.ToTable("profile_hand_heroes", (string)null);
                 });
 
-            modelBuilder.Entity("Profile.Infrastructure.Entities.HeroEntity", b =>
+            modelBuilder.Entity("Profile.Data.Data.Entities.HeroEntity", b =>
                 {
-                    b.HasOne("Profile.Infrastructure.Entities.ProfileEntity", "Profile")
+                    b.HasOne("Profile.Data.Data.Entities.ProfileEntity", "Profile")
                         .WithMany("Heroes")
                         .HasForeignKey("ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -132,15 +132,15 @@ namespace Profile.Infrastructure.Migrations
                     b.Navigation("Profile");
                 });
 
-            modelBuilder.Entity("Profile.Infrastructure.Entities.ProfileHandHeroesEntity", b =>
+            modelBuilder.Entity("Profile.Data.Data.Entities.ProfileHandHeroesEntity", b =>
                 {
-                    b.HasOne("Profile.Infrastructure.Entities.ProfileEntity", "Profile")
+                    b.HasOne("Profile.Data.Data.Entities.ProfileEntity", "Profile")
                         .WithMany("ActiveHeroes")
                         .HasForeignKey("ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Profile.Infrastructure.Entities.HeroEntity", "ActiveHeroes")
+                    b.HasOne("Profile.Data.Data.Entities.HeroEntity", "ActiveHeroes")
                         .WithMany("HandHeroes")
                         .HasForeignKey("ProfileId", "HeroId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -151,12 +151,12 @@ namespace Profile.Infrastructure.Migrations
                     b.Navigation("Profile");
                 });
 
-            modelBuilder.Entity("Profile.Infrastructure.Entities.HeroEntity", b =>
+            modelBuilder.Entity("Profile.Data.Data.Entities.HeroEntity", b =>
                 {
                     b.Navigation("HandHeroes");
                 });
 
-            modelBuilder.Entity("Profile.Infrastructure.Entities.ProfileEntity", b =>
+            modelBuilder.Entity("Profile.Data.Data.Entities.ProfileEntity", b =>
                 {
                     b.Navigation("ActiveHeroes");
 

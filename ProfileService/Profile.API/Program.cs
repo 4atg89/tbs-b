@@ -2,14 +2,14 @@ using System.Text.Json.Serialization;
 using Asp.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Profile.API.Apis;
+using Profile.Data;
+using Profile.Data.Data;
 using Profile.Domain;
-using Profile.Infrastructure;
-using Profile.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// dotnet ef database update -p Profile.Infrastructure -s Profile.API      
-// dotnet ef migrations add InitialMigration -p Profile.Infrastructure -s Profile.API
+// dotnet ef database update -p Profile.Data -s Profile.API      
+// dotnet ef migrations add InitialMigration -p Profile.Data -s Profile.API
 builder.Services.AddDbContextFactory<ProfileDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");

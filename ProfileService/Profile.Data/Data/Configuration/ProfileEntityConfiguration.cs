@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Profile.Infrastructure.Entities;
+using Profile.Data.Data.Entities;
 
-namespace Profile.Infrastructure.Configuration;
+namespace Profile.Data.Data.Configuration;
 
 public static class ProfileEntityConfiguration
 {

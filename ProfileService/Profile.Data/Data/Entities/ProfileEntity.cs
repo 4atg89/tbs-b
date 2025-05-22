@@ -1,4 +1,4 @@
-namespace Profile.Infrastructure.Entities;
+namespace Profile.Data.Data.Entities;
 
 public class ProfileEntity
 {

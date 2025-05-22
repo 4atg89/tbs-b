@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Profile.Infrastructure\Profile.Infrastructure.csproj" />
+    <ProjectReference Include="..\Profile.Data\Profile.Data.csproj" />
     <ProjectReference Include="..\Profile.Domain\Profile.Domain.csproj" />
   </ItemGroup>
 
