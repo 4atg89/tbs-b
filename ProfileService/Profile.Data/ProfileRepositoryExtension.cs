@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Profile.Data.Repository;
 using Profile.Domain.Repository;
-using Profile.Infrastructure.Repository;
 
-namespace Profile.Infrastructure;
+namespace Profile.Data;
 
 public static class ProfileRepositoryExtension
 {

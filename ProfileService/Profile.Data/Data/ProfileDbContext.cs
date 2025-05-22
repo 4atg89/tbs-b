@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using Profile.Infrastructure.Configuration;
-using Profile.Infrastructure.Entities;
+using Profile.Data.Data.Configuration;
+using Profile.Data.Data.Entities;
 
-namespace Profile.Infrastructure.Data;
+namespace Profile.Data.Data;
 
 public class ProfileDbContext(DbContextOptions<ProfileDbContext> options) : DbContext(options)
 {
