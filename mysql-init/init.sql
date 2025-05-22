@@ -1,0 +1,10 @@
+CREATE DATABASE IF NOT EXISTS tbs_auth;
+CREATE DATABASE IF NOT EXISTS tbs_profile;
+
+CREATE USER IF NOT EXISTS 'tbsAuth4atg89'@'%' IDENTIFIED BY 'rhz27RHZ@&Auth';
+GRANT ALL PRIVILEGES ON tbs_auth.* TO 'tbsAuth4atg89'@'%';
+
+CREATE USER IF NOT EXISTS 'tbsProfile4atg89'@'%' IDENTIFIED BY 'rhz27RHZ@&Profile';
+GRANT ALL PRIVILEGES ON tbs_profile.* TO 'tbsProfile4atg89'@'%';
+
+FLUSH PRIVILEGES;
