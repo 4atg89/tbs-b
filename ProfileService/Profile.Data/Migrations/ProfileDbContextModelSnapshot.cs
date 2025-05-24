@@ -48,11 +48,19 @@ namespace Profile.Data.Migrations
                         .HasColumnType("char(36)")
                         .HasColumnName("id");
 
-                    b.Property<int>("BattleCount")
+                    b.Property<int>("ChallengeGamesCount")
                         .HasColumnType("int")
-                        .HasColumnName("battle_count");
+                        .HasColumnName("challenge_games_count");
 
-                    b.Property<Guid>("ClanId")
+                    b.Property<int>("ChallengeWinStreakCount")
+                        .HasColumnType("int")
+                        .HasColumnName("challenge_win_streak_count");
+
+                    b.Property<int>("ChallengeWinsCount")
+                        .HasColumnType("int")
+                        .HasColumnName("challenge_wins_count");
+
+                    b.Property<Guid?>("ClanId")
                         .HasColumnType("char(36)")
                         .HasColumnName("clan_id");
 
@@ -60,17 +68,29 @@ namespace Profile.Data.Migrations
                         .HasColumnType("int")
                         .HasColumnName("coins");
 
-                    b.Property<int>("EpicWinsCount")
-                        .HasColumnType("int")
-                        .HasColumnName("epic_wins_count");
-
                     b.Property<int>("Gems")
                         .HasColumnType("int")
                         .HasColumnName("gems");
 
-                    b.Property<int>("MaxRating")
+                    b.Property<int>("MainEpicWinsCount")
                         .HasColumnType("int")
-                        .HasColumnName("max_rating");
+                        .HasColumnName("main_epic_wins_count");
+
+                    b.Property<int>("MainGamesCount")
+                        .HasColumnType("int")
+                        .HasColumnName("main_games_count");
+
+                    b.Property<int>("MainKilledEnemies")
+                        .HasColumnType("int")
+                        .HasColumnName("main_killed_enemies_count");
+
+                    b.Property<int>("MainMaxRating")
+                        .HasColumnType("int")
+                        .HasColumnName("main_max_rating");
+
+                    b.Property<int>("MainWinsCount")
+                        .HasColumnType("int")
+                        .HasColumnName("main_wins_count");
 
                     b.Property<string>("Nickname")
                         .IsRequired()
@@ -81,14 +101,6 @@ namespace Profile.Data.Migrations
                     b.Property<int>("Rating")
                         .HasColumnType("int")
                         .HasColumnName("rating");
-
-                    b.Property<int>("WinStreakCount")
-                        .HasColumnType("int")
-                        .HasColumnName("win_streak_count");
-
-                    b.Property<int>("WinsCount")
-                        .HasColumnType("int")
-                        .HasColumnName("wins_count");
 
                     b.HasKey("Id");
 

@@ -1,7 +1,10 @@
+using Profile.API.Model;
+
 namespace Profile.Domain.Repository;
 
 public interface IProfileRepository
 {
-    Task<string> GetProfile(Guid id);
+    Task<ProfileModel?> GetProfile(Guid id);
+    Task<ProfileModel> SaveProfile(ProfileModel profile);
 
 }

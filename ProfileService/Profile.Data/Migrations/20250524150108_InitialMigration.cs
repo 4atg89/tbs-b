@@ -24,12 +24,15 @@ namespace Profile.Data.Migrations
                     rating = table.Column<int>(type: "int", nullable: false),
                     coins = table.Column<int>(type: "int", nullable: false),
                     gems = table.Column<int>(type: "int", nullable: false),
-                    clan_id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    wins_count = table.Column<int>(type: "int", nullable: false),
-                    max_rating = table.Column<int>(type: "int", nullable: false),
-                    epic_wins_count = table.Column<int>(type: "int", nullable: false),
-                    win_streak_count = table.Column<int>(type: "int", nullable: false),
-                    battle_count = table.Column<int>(type: "int", nullable: false)
+                    clan_id = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
+                    main_games_count = table.Column<int>(type: "int", nullable: false),
+                    main_wins_count = table.Column<int>(type: "int", nullable: false),
+                    main_max_rating = table.Column<int>(type: "int", nullable: false),
+                    main_epic_wins_count = table.Column<int>(type: "int", nullable: false),
+                    main_killed_enemies_count = table.Column<int>(type: "int", nullable: false),
+                    challenge_win_streak_count = table.Column<int>(type: "int", nullable: false),
+                    challenge_wins_count = table.Column<int>(type: "int", nullable: false),
+                    challenge_games_count = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
