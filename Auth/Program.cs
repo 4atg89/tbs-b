@@ -1,9 +1,9 @@
 using Auth;
-using Auth.Authentication;
 using Auth.Data;
 using Auth.Data.Repository;
 using Auth.Services;
 using JwtLibrary;
+using JwtLibrary.Authentication;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;

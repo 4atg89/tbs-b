@@ -10,9 +10,12 @@ public class ProfileEntity
     public ICollection<HeroEntity>? Heroes { get; set; }
     public Guid? ClanId { get; set; }
     public ICollection<ProfileHandHeroesEntity>? ActiveHeroes { get; set; }
-    public required int WinsCount { get; set; }
-    public required int MaxRating { get; set; }
-    public required int EpicWinsCount { get; set; }
-    public required int WinStreakCount { get; set; }
-    public required int BattleCount { get; set; }
+    public required int MainGamesCount { get; set; }
+    public required int MainWinsCount { get; set; }
+    public required int MainMaxRating { get; set; }
+    public required int MainEpicWinsCount { get; set; }
+    public required int MainKilledEnemies { get; set; }
+    public required int ChallengeWinStreakCount { get; set; }
+    public required int ChallengeWinsCount { get; set; }
+    public required int ChallengeGamesCount { get; set; }
 }

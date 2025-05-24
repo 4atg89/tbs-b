@@ -1,7 +1,7 @@
-using Auth.Authentication;
 using Auth.Data.Repository;
 using Auth.Dto;
 using Auth.Extensions;
+using JwtLibrary.Authentication;
 
 namespace Auth.Services;
 

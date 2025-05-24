@@ -22,17 +22,23 @@ public static class ProfileEntityConfiguration
 
         entity.Property(x => x.Gems).HasColumnName("gems").IsRequired();
 
-        entity.Property(x => x.ClanId).HasColumnName("clan_id").IsRequired();
+        entity.Property(x => x.ClanId).HasColumnName("clan_id");
 
-        entity.Property(x => x.WinsCount).HasColumnName("wins_count").IsRequired();
+        entity.Property(x => x.MainWinsCount).HasColumnName("main_wins_count").IsRequired();
 
-        entity.Property(x => x.MaxRating).HasColumnName("max_rating").IsRequired();
+        entity.Property(x => x.MainMaxRating).HasColumnName("main_max_rating").IsRequired();
 
-        entity.Property(x => x.EpicWinsCount).HasColumnName("epic_wins_count").IsRequired();
+        entity.Property(x => x.MainGamesCount).HasColumnName("main_games_count").IsRequired();
 
-        entity.Property(x => x.WinStreakCount).HasColumnName("win_streak_count").IsRequired();
+        entity.Property(x => x.MainEpicWinsCount).HasColumnName("main_epic_wins_count").IsRequired();
 
-        entity.Property(x => x.BattleCount).HasColumnName("battle_count").IsRequired();
+        entity.Property(x => x.MainKilledEnemies).HasColumnName("main_killed_enemies_count").IsRequired();
+
+        entity.Property(x => x.ChallengeWinStreakCount).HasColumnName("challenge_win_streak_count").IsRequired();
+
+        entity.Property(x => x.ChallengeWinsCount).HasColumnName("challenge_wins_count").IsRequired();
+
+        entity.Property(x => x.ChallengeGamesCount).HasColumnName("challenge_games_count").IsRequired();
 
         entity.HasIndex(e => e.Nickname).IsUnique();
 
