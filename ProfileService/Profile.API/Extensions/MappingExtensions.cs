@@ -1,7 +1,9 @@
 using Profile.API.Model;
+using Profile.Domain.Model;
 
 namespace Profile.API.Extensions;
 
+//todo redo that awful mapping class
 internal static class MappingExtensions
 {
 
@@ -49,6 +51,7 @@ internal static class MappingExtensions
             Inventory = inventory.MapInventory(),
             Clan = MapClan(model.Clan),
             Heroes = [.. model.Heroes!.Select(h => h.MapHeroesModel())],
+            HandHeroes = [.. model.HandHeroes!.Select(h => h.MapHandHeroesModel())],
             MainStatistics = mainStatistics.MapMainStatistics(),
             Challenges = challenges.MapChallenges()
         };
@@ -78,10 +81,27 @@ internal static class MappingExtensions
     internal static MainStatisticsResponse MapMainStatistics(this MainStatisticsModel model) =>
         new() { Wins = model.Wins, MaxRating = model.MaxRating, EpicWins = model.EpicWins, GamesCount = model.GamesCount, KilledEnemies = model.KilledEnemies };
 
+    internal static ProfileHandHeroesResponse MapHandHeroesModel(this ProfileHandHeroesModel model) =>
+        new() { HeroId = model.HeroId, HandType = model.HandType.MapProfileHandType() };
+
     internal static HeroesResponse MapHeroesModel(this HeroesModel model) =>
         new() { HeroId = model.HeroId, Level = model.Level, CardsAmount = model.CardsAmount };
 
     internal static ChallengesResponse MapChallenges(this ChallengesModel model) =>
         new() { WinStreak = model.WinStreak, ChallengesCount = model.ChallengesCount, ChallengesWins = model.ChallengesWins };
 
+    internal static DeckHandTypeResponse MapProfileHandType(this DeckHandType model)
+    {
+        return model switch
+        {
+            DeckHandType.DYNAMIC => DeckHandTypeResponse.DYNAMIC,
+            DeckHandType.REGULAR_1 => DeckHandTypeResponse.REGULAR_1,
+            DeckHandType.REGULAR_2 => DeckHandTypeResponse.REGULAR_2,
+            DeckHandType.REGULAR_3 => DeckHandTypeResponse.REGULAR_3,
+            DeckHandType.REGULAR_4 => DeckHandTypeResponse.REGULAR_4,
+            DeckHandType.TOURNAMENT => DeckHandTypeResponse.TOURNAMENT,
+            DeckHandType.CHALLENGES => DeckHandTypeResponse.CHALLENGES,
+            _ => throw new ArgumentOutOfRangeException(nameof(model), $"Unsupported value: {model}")
+        };
+    }
 }

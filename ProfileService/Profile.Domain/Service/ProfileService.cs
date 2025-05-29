@@ -1,5 +1,4 @@
-﻿
-using Profile.API.Model;
+﻿using Profile.Domain.Model;
 using Profile.Domain.Repository;
 
 namespace Profile.Domain;

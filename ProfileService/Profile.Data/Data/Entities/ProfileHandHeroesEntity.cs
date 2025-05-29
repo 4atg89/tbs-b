@@ -11,5 +11,5 @@ public class ProfileHandHeroesEntity
 
 public enum ProfileHandType
 {
-    REGULAR, TOURNAMENT, CHALLENGES
+    DYNAMIC, REGULAR_1, REGULAR_2, REGULAR_3, REGULAR_4, TOURNAMENT, CHALLENGES
 }

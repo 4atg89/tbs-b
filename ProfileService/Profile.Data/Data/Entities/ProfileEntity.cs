@@ -9,7 +9,7 @@ public class ProfileEntity
     public required int Gems { get; set; }
     public ICollection<HeroEntity>? Heroes { get; set; }
     public Guid? ClanId { get; set; }
-    public ICollection<ProfileHandHeroesEntity>? ActiveHeroes { get; set; }
+    public ICollection<ProfileHandHeroesEntity>? HandHeroes { get; set; }
     public required int MainGamesCount { get; set; }
     public required int MainWinsCount { get; set; }
     public required int MainMaxRating { get; set; }

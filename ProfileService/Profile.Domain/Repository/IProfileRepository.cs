@@ -1,4 +1,4 @@
-using Profile.API.Model;
+using Profile.Domain.Model;
 
 namespace Profile.Domain.Repository;
 

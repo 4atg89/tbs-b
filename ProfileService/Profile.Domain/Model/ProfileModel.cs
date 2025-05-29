@@ -1,4 +1,4 @@
-namespace Profile.API.Model;
+namespace Profile.Domain.Model;
 
 public class ProfileModel
 {
@@ -8,11 +8,13 @@ public class ProfileModel
     public InventoryModel? Inventory { get; set; }
     public ClanModel? Clan { get; set; }
     public List<HeroesModel>? Heroes { get; set; }
+    public List<ProfileHandHeroesModel>? HandHeroes { get; set; }
     public MainStatisticsModel? MainStatistics { get; set; }
     public ChallengesModel? Challenges { get; set; }
 
     public static ProfileModel DefaultProfile(Guid id, string nickname)
     {
+        var heroes = HeroesModel.DefaultHeroesList();
         return new ProfileModel
         {
             Id = id,
@@ -20,7 +22,8 @@ public class ProfileModel
             Rating = 0,
             Inventory = InventoryModel.DefaultInventory(),
             Clan = null,
-            Heroes = HeroesModel.DefaultHeroesList(),
+            Heroes = heroes,
+            HandHeroes = ProfileHandHeroesModel.DefaultHeroesList(heroes),
             MainStatistics = MainStatisticsModel.DefaultMainStatistics(),
             Challenges = ChallengesModel.DefaultChallenges()
         };
@@ -39,22 +42,6 @@ public class ClanModel
 {
     public required Guid Id { get; set; }
     public string? ClanName { get; set; }
-
-}
-
-public class HeroesModel
-{
-    public required int HeroId { get; set; }
-    public required int Level { get; set; }
-    public required int CardsAmount { get; set; }
-
-    public static List<HeroesModel> DefaultHeroesList() => new()
-    {
-        new() { HeroId = 1, Level = 1, CardsAmount = 1},
-        new() { HeroId = 2, Level = 1, CardsAmount = 1},
-        new() { HeroId = 3, Level = 1, CardsAmount = 1},
-        new() { HeroId = 4, Level = 1, CardsAmount = 1},
-    };
 
 }
 
