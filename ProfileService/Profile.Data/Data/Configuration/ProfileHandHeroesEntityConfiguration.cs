@@ -20,7 +20,7 @@ public static class ProfileHandHeroesEntityConfiguration
         entity.Property(x => x.HandType).HasColumnName("type").IsRequired();
 
         entity.HasOne(x => x.Profile)
-            .WithMany(p => p.ActiveHeroes)
+            .WithMany(p => p.HandHeroes)
             .HasForeignKey(x => x.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
     }
