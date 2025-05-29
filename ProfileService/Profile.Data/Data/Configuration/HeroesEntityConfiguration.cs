@@ -18,6 +18,8 @@ public static class HeroesEntityConfiguration
         entity.Property(e => e.HeroId).HasColumnName("hero_id").IsRequired();
 
         entity.Property(e => e.Level).HasColumnName("level").IsRequired();
+        
+        entity.Property(e => e.CardsAmount).HasColumnName("cards_amount").IsRequired();
 
         entity.HasOne(e => e.Profile)
             .WithMany(i => i.Heroes)

@@ -9,20 +9,20 @@ namespace Profile.Data.Repository;
 internal class ProfileRepository(IDbContextFactory<ProfileDbContext> dbContextFactory) : IProfileRepository
 {
 
-    public async Task<T> ExecuteAsync<T>(Func<ProfileDbContext, Task<T>> action)
+    private async Task<T> ExecuteAsync<T>(Func<ProfileDbContext, Task<T>> action)
     {
         var context = await dbContextFactory.CreateDbContextAsync();
         return await action(context);
     }
 
-    public async Task ExecuteAsync(Func<ProfileDbContext, Task> action)
+    private async Task ExecuteAsync(Func<ProfileDbContext, Task> action)
     {
         var context = await dbContextFactory.CreateDbContextAsync();
         await action(context);
     }
 
     public async Task<ProfileModel?> GetProfile(Guid id) =>
-        await ExecuteAsync(async context => (await context.Profiles.FindAsync(id))?.MapProfile());
+        await ExecuteAsync(async context => (await context.Profiles.Include(p => p.Heroes).FirstAsync(p => p.Id == id))?.MapProfile());
 
     public async Task<ProfileModel> SaveProfile(ProfileModel profile) => await ExecuteAsync(async context =>
     {

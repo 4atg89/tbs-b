@@ -7,7 +7,7 @@ public class ProfileResponse
     public required int Rating { get; set; }
     public InventoryResponse? Inventory { get; set; }
     public ClanResponse? Clan { get; set; }
-    public HeroesResponse? Heroes { get; set; }
+    public List<HeroesResponse>? Heroes { get; set; }
     public MainStatisticsResponse? MainStatistics { get; set; }
     public ChallengesResponse? Challenges { get; set; }
 
@@ -29,19 +29,27 @@ public class ClanResponse
 
 public class HeroesResponse
 {
+    public required int HeroId { get; set; }
+    public required int Level { get; set; }
+    public required int CardsAmount { get; set; }
 }
 
 public class MainStatisticsResponse
 {
+    
     public required int Wins { get; set; }
-    public required int Rating { get; set; }
+    public required int MaxRating { get; set; }
     public required int EpicWins { get; set; }
+    public required int GamesCount { get; set; }
+    public required int KilledEnemies { get; set; }
 }
 
 
 public class ChallengesResponse
 {
+   
     public required int WinStreak { get; set; }
-    public required int Count { get; set; }
+    public required int ChallengesCount { get; set; }
+    public required int ChallengesWins { get; set; }
 }
 
