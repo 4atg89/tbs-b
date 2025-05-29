@@ -26,7 +26,8 @@ internal static class MappingExtensions
             MainKilledEnemies = mainStatistics.KilledEnemies,
             ChallengeWinStreakCount = challenges.WinStreak,
             ChallengeWinsCount = challenges.ChallengesCount,
-            ChallengeGamesCount = challenges.ChallengesWins
+            ChallengeGamesCount = challenges.ChallengesWins,
+            Heroes = model.MapHeroesEntity()
         };
     }
 
@@ -39,7 +40,7 @@ internal static class MappingExtensions
             Rating = model.Rating,
             Inventory = model.MapInventory(),
             Clan = model.MapClan(),
-            Heroes = new HeroesModel { },
+            Heroes = [.. model.Heroes!.Select(h => h.MapHeroesModel())],
             MainStatistics = model.MapMainStatistics(),
             Challenges = model.MapChallenges()
         };
@@ -51,6 +52,9 @@ internal static class MappingExtensions
     internal static MainStatisticsModel MapMainStatistics(this ProfileEntity model) =>
         new() { Wins = model.MainWinsCount, MaxRating = model.MainMaxRating, EpicWins = model.MainEpicWinsCount, GamesCount = model.MainGamesCount, KilledEnemies = model.MainKilledEnemies };
 
+    internal static HeroesModel MapHeroesModel(this HeroEntity model) =>
+        new() { HeroId = model.HeroId, Level = model.Level, CardsAmount = model.CardsAmount };
+
     internal static ChallengesModel MapChallenges(this ProfileEntity model) =>
         new() { WinStreak = model.ChallengeWinStreakCount, ChallengesCount = model.ChallengeGamesCount, ChallengesWins = model.ChallengeWinsCount };
 
@@ -61,4 +65,9 @@ internal static class MappingExtensions
         return new() { Id = (Guid)clanId };
     }
 
+    internal static List<HeroEntity> MapHeroesEntity(this ProfileModel model) =>
+        [.. model.Heroes!.Select(h => h.MapHeroesEntity(model.Id))];
+
+    internal static HeroEntity MapHeroesEntity(this HeroesModel model, Guid profileId) =>
+        new() { ProfileId = profileId, HeroId = model.HeroId, Level = model.Level, CardsAmount = model.CardsAmount };
 }

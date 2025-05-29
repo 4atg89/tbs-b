@@ -7,7 +7,7 @@ public class ProfileModel
     public required int Rating { get; set; }
     public InventoryModel? Inventory { get; set; }
     public ClanModel? Clan { get; set; }
-    public HeroesModel? Heroes { get; set; }
+    public List<HeroesModel>? Heroes { get; set; }
     public MainStatisticsModel? MainStatistics { get; set; }
     public ChallengesModel? Challenges { get; set; }
 
@@ -20,7 +20,7 @@ public class ProfileModel
             Rating = 0,
             Inventory = InventoryModel.DefaultInventory(),
             Clan = null,
-            Heroes = new HeroesModel { },
+            Heroes = HeroesModel.DefaultHeroesList(),
             MainStatistics = MainStatisticsModel.DefaultMainStatistics(),
             Challenges = ChallengesModel.DefaultChallenges()
         };
@@ -44,6 +44,18 @@ public class ClanModel
 
 public class HeroesModel
 {
+    public required int HeroId { get; set; }
+    public required int Level { get; set; }
+    public required int CardsAmount { get; set; }
+
+    public static List<HeroesModel> DefaultHeroesList() => new()
+    {
+        new() { HeroId = 1, Level = 1, CardsAmount = 1},
+        new() { HeroId = 2, Level = 1, CardsAmount = 1},
+        new() { HeroId = 3, Level = 1, CardsAmount = 1},
+        new() { HeroId = 4, Level = 1, CardsAmount = 1},
+    };
+
 }
 
 public class MainStatisticsModel
