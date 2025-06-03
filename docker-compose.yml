@@ -27,6 +27,23 @@ services:
     networks:
       - backend
 
+  tbs-b-rabbitmq:
+    image: rabbitmq:3-management
+    container_name: tbs-b-rabbitmq
+    ports:
+      - "5672:5672"     
+      - "15672:15672"   
+    networks:
+      - backend
+    environment:
+      RABBITMQ_DEFAULT_USER: ${TBS_RABBIT_MQ_ROOT_USER}
+      RABBITMQ_DEFAULT_PASS: ${TBS_RABBIT_MQ_ROOT_PASSWORD}
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: "-rabbitmq_management load_definitions \"/etc/rabbitmq/definitions.json\""
+    volumes:
+      - tbs_rabbitmq_data:/var/lib/rabbitmq
+      - ./rabbitmq-init/definitions.json:/etc/rabbitmq/definitions.json
+      - ./rabbitmq-init/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+
   tbs-b-auth-service:
     build:
       context: .
@@ -35,6 +52,7 @@ services:
     depends_on:
       - tbs-b-db
       - tbs-b-redis
+      - tbs-b-rabbitmq
     ports:
       - "5030:5030"
     networks:
@@ -44,9 +62,30 @@ services:
       - ASPNETCORE_URLS=http://+:5030
       - ConnectionStrings__DefaultConnection=${TBS_DB_AUTH_CONNECTION_STRING}
       - ConnectionStrings__Redis=${TBS_DB_REDIS}
+      - RabbitMQ__HostName=tbs-b-rabbitmq
+      - RabbitMQ__UserName=${TBS_RABBIT_MQ_USER_NOTIFICATION}
+      - RabbitMQ__Password=${TBS_RABBIT_MQ_PASSWORD_NOTIFICATION}
+      - RabbitMQ__VirtualHost=notifications
+
+  tbs-b-notification-service:
+    build:
+      context: .
+      dockerfile: NotificationService/Dockerfile
+    container_name: tbs-b-notification-service
+    depends_on:
+      - tbs-b-rabbitmq
+    networks:
+      - backend
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - RabbitMQ__HostName=tbs-b-rabbitmq
+      - RabbitMQ__UserName=${TBS_RABBIT_MQ_USER_NOTIFICATION}
+      - RabbitMQ__Password=${TBS_RABBIT_MQ_PASSWORD_NOTIFICATION}
+      - RabbitMQ__VirtualHost=notifications
 
 volumes:
   tbs_data:
+  tbs_rabbitmq_data:
 
 networks:
   backend:
