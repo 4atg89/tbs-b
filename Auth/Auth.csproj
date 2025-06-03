@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\JwtLibrary\JwtLibrary.csproj" />
+    <ProjectReference Include="..\Shared.RabbitMQ\Shared.RabbitMQ.csproj" />
   </ItemGroup>
 
 </Project>

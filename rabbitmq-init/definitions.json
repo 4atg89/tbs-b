@@ -1,0 +1,28 @@
+{
+    "users": [
+        {
+            "name": "root",
+            "password": "RHZrhz27",
+            "tags": "administrator"
+        },
+        {
+            "name": "notification_mq",
+            "password": "RHZrhz27Notification",
+            "tags": ""
+        }
+    ],
+    "vhosts": [
+        {
+            "name": "notifications"
+        }
+    ],
+    "permissions": [
+        {
+            "user": "notification_mq",
+            "vhost": "notifications",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
+        }
+    ]
+}

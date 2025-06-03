@@ -1,13 +1,16 @@
+using System.Text;
 using Auth.Data.Repository;
 using Auth.Dto;
 using Auth.Extensions;
 using JwtLibrary.Authentication;
+using Shared.RabbitMQ.Producer;
 
 namespace Auth.Services;
 
 public class UserVerificationService(
     ICodeRepository codeRepository,
     IAuthRepository authRepository,
+    IRabbitMqProducer rabbitMqProducer,
     ITokenService tokenGenerator
 ) : IUserVerificationService
 {
@@ -18,7 +21,7 @@ public class UserVerificationService(
     public async Task NotifyUser(Guid verificationId, string email, DateTime expiresAt)
     {
         var code = GenerateFourDigitCode();
-        //todo send email
+        await rabbitMqProducer.Publish("notifications-exchange", "send.email", Encoding.UTF8.GetBytes($"the code is {code}"));
         await codeRepository.StoreEmailAndCode(verificationId, email, code, expiresAt);
     }
 
