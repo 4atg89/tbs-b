@@ -20,6 +20,12 @@ public static class ProfileRepositoryExtension
             var connectionString = configuration.GetConnectionString("DefaultConnection");
             options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
         });
+
+        services.AddGrpcClient<HeroesService.Grpc.HeroService.HeroServiceClient>(o =>
+        {
+            o.Address = new Uri("http://localhost:5032");
+        });
+        services.AddSingleton<IHeroesGRPCRepository, HeroesGRPCRepository>();
         return services;
     }
 }

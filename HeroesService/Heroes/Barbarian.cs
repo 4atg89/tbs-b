@@ -2,6 +2,7 @@ namespace HeroesService.Heroes;
 
 public class Barbarian : Hero
 {
+    public override int Id { get => 1; set => throw new NotImplementedException(); }
     public override string Name { get => ""; set => throw new NotImplementedException(); }
     public override int Level { get => 1; set => throw new NotImplementedException(); }
     public override string Image { get => ""; set => throw new NotImplementedException(); }
