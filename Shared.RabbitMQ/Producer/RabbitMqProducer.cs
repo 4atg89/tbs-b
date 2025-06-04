@@ -24,7 +24,7 @@ internal class RabbitMqProducer : IRabbitMqProducer
 
         await channel.BasicPublishAsync(exchange: exchange,
                              routingKey: routingKey,
-                             mandatory: true,
+                             mandatory: false,
                              basicProperties: properties,
                              body: messageBody);
     }

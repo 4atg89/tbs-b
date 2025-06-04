@@ -2,6 +2,7 @@ namespace HeroesService.Heroes;
 
 public abstract class Hero
 {
+    public abstract int Id { get; set; }
     public abstract string Name { get; set; }
     public abstract int Level { get; set; }
     public abstract string Image { get; set; }

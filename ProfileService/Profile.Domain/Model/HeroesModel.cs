@@ -2,7 +2,7 @@ namespace Profile.Domain.Model;
 
 public class HeroesModel
 {
-     public required int HeroId { get; set; }
+    public required int HeroId { get; set; }
     public required int Level { get; set; }
     public required int CardsAmount { get; set; }
 

@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+option csharp_namespace = "HeroesService.Grpc";
+
+service HeroService {
+  rpc GetHeroes (HeroesRequest) returns (HeroesResponse);
+}
+
+message HeroesRequest {
+  repeated HeroRequestDto heroes = 1;
+}
+
+message HeroRequestDto {
+  int32 hero_id = 1;
+  int32 level = 2;
+}
+
+message HeroesResponse {
+  repeated HeroResponseDto heroes = 1;
+}
+
+message HeroResponseDto {
+  int32 hero_id = 1;
+  string name = 2;
+  int32 damage = 3;
+  int32 health = 4;
+  int32 speed = 5;
+  int32 weight = 6;
+  int32 defense = 7;
+  int32 attack_range = 8;
+  int32 evasion = 9;
+  string image = 10;
+  string description_title = 11;
+  string description = 12;
+  int32 next_level_price_coins = 13;
+  int32 next_level_price_cards = 14;
+  int32 rarity = 15;
+}
