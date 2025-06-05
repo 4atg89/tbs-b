@@ -17,10 +17,10 @@ public static class HeroesApi
     }
 
 
-    public static async Task<Results<Ok<Barbarian>, NotFound, BadRequest<ProblemDetails>>> GetHeroes(HttpContext context)
+    public static async Task<Results<Ok<BarbarianFactory>, NotFound, BadRequest<ProblemDetails>>> GetHeroes(HttpContext context)
     {
         Console.WriteLine("HeroHeroHero");
         await Task.Delay(500);
-        return TypedResults.Ok(new Barbarian());
+        return TypedResults.Ok(new BarbarianFactory());
     }
 }
