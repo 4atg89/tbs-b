@@ -25,7 +25,6 @@ public static class ProfileRepositoryExtension
         {
             o.Address = new Uri("http://localhost:5032");
         });
-        services.AddSingleton<IHeroesGRPCRepository, HeroesGRPCRepository>();
         return services;
     }
 }
