@@ -1,12 +1,16 @@
+using HeroesService.Grpc;
 using Microsoft.EntityFrameworkCore;
 using Profile.Data.Data;
+using Profile.Data.Data.Entities;
 using Profile.Data.Extensions;
 using Profile.Domain.Model;
 using Profile.Domain.Repository;
 
 namespace Profile.Data.Repository;
 
-internal class ProfileRepository(IDbContextFactory<ProfileDbContext> dbContextFactory) : IProfileRepository
+internal class ProfileRepository(
+    IDbContextFactory<ProfileDbContext> dbContextFactory,
+    HeroService.HeroServiceClient _heroesClient) : IProfileRepository
 {
 
     private async Task<T> ExecuteAsync<T>(Func<ProfileDbContext, Task<T>> action)
@@ -23,11 +27,14 @@ internal class ProfileRepository(IDbContextFactory<ProfileDbContext> dbContextFa
 
     public async Task<ProfileModel?> GetProfile(Guid id) =>
         await ExecuteAsync(async context =>
-            (await context.Profiles
+        {
+            var profile = (await context.Profiles
                 .Include(p => p.Heroes)
                 .Include(p => p.HandHeroes).FirstOrDefaultAsync(p => p.Id == id)
-            )?.MapProfile()
-        );
+            )?.MapProfile();
+            profile!.Heroes = await GetHeroes(profile.Heroes!);
+            return profile;
+        });
 
     public async Task<ProfileModel> SaveProfile(ProfileModel profile) => await ExecuteAsync(async context =>
     {
@@ -35,4 +42,26 @@ internal class ProfileRepository(IDbContextFactory<ProfileDbContext> dbContextFa
         await context.SaveChangesAsync();
         return profile;
     });
+
+    private async Task<List<HeroesModel>> GetHeroes(List<HeroesModel> heroes)
+    {
+        var request = new HeroesRequest
+        {
+            Heroes = { heroes.Select(h => new HeroRequestDto { HeroId = h.HeroId, Level = h.Level }) }
+        };
+
+        var response = await _heroesClient.GetHeroesAsync(request);
+        var responseDict = response.Heroes.ToDictionary(h => h.HeroId);
+
+        foreach (var hero in heroes)
+        {
+            if (responseDict.TryGetValue(hero.HeroId, out var matching))
+            {
+                hero.Image = matching.Image;
+                hero.NextLevelPriceCoins = matching.NextLevelPriceCoins;
+            }
+        }
+
+        return heroes;
+    }
 }

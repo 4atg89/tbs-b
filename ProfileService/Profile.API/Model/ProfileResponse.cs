@@ -33,6 +33,8 @@ public class HeroesResponse
     public required int HeroId { get; set; }
     public required int Level { get; set; }
     public required int CardsAmount { get; set; }
+    public string? Image { get; set; }
+    public int? NextLevelPriceCoins { get; set; }
 }
 
 public class ProfileHandHeroesResponse

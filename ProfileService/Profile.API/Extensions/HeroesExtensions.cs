@@ -8,6 +8,13 @@ internal static class HeroesExtensions
 {
 
     internal static HeroesResponse MapHeroesModel(this HeroesModel model) =>
-        new() { HeroId = model.HeroId, Level = model.Level, CardsAmount = model.CardsAmount };
+        new()
+        {
+            HeroId = model.HeroId,
+            Level = model.Level,
+            CardsAmount = model.CardsAmount,
+            Image = model.Image,
+            NextLevelPriceCoins = model.NextLevelPriceCoins
+        };
 
 }
