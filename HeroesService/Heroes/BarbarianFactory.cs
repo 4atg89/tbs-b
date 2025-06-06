@@ -4,7 +4,7 @@ namespace HeroesService.Heroes;
 
 public class BarbarianFactory: IHeroFactory
 {
-    public HeroResponseDto BuildHero(int level)
+    public HeroResponseDto BuildHero(int level, int id)
     {
         return new HeroResponseDto
         {
@@ -22,7 +22,8 @@ public class BarbarianFactory: IHeroFactory
             Description = "Hit some ones face till barbeque",
             NextLevelPriceCoins = 10,
             NextLevelPriceCards = 10,
-            Rarity = 1
+            Rarity = 1,
+            Size = 1
         };
     }
 }
