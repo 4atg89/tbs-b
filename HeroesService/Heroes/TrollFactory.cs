@@ -2,14 +2,14 @@ using HeroesService.Grpc;
 
 namespace HeroesService.Heroes;
 
-public class MageFactory: IHeroFactory
+public class TrollFactory : IHeroFactory
 {
     public HeroResponseDto BuildHero(int level, int id)
     {
         return new HeroResponseDto
         {
-            HeroId = 3,
-            Name = "Mage",
+            HeroId = 10,
+            Name = "Troll",
             Damage = 20,
             Health = 45,
             Speed = 30,

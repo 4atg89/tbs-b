@@ -4,5 +4,5 @@ namespace HeroesService.Heroes;
 
 internal interface IHeroFactory
 {
-    public HeroResponseDto BuildHero(int level);
+    public HeroResponseDto BuildHero(int level, int id);
 }

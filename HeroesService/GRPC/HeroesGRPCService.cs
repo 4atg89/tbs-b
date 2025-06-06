@@ -1,22 +1,23 @@
 using Grpc.Core;
 using HeroesService.Grpc;
+using HeroesService.Heroes;
 
 namespace HeroesService.GRPC;
 
 public class HeroesGRPCService : HeroService.HeroServiceBase
 {
+
+    private IHeroFactory factory = new HeroFactory();
     public override Task<HeroesResponse> GetHeroes(HeroesRequest request, ServerCallContext context)
     {
-        var image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThTxG3RDV98g63Ujjqst0LvYej8cywueL_RSnq5ku4ft_vMeNXOb0se6gjeeZrbqdZqE4&usqp=CAU";
+        foreach (var item in request.Heroes)
+        {
+            Console.WriteLine($"response => {item.HeroId} {item.Level}");
+        }
         return Task.FromResult(new HeroesResponse
         {
-            Heroes = {
-                 new HeroResponseDto { HeroId = 1, Image = image, NextLevelPriceCoins = 10 },
-                 new HeroResponseDto { HeroId = 2, Image = image, NextLevelPriceCoins = 11 },
-                 new HeroResponseDto { HeroId = 3, Image = image, NextLevelPriceCoins = 12 },
-                 new HeroResponseDto { HeroId = 4, Image = image, NextLevelPriceCoins = 15 },
-            }
+            Heroes = { request.Heroes.Select(h => factory.BuildHero(h.Level, h.HeroId)) }
         });
     }
-    
+
 }

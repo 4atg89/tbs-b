@@ -35,4 +35,5 @@ message HeroResponseDto {
   int32 next_level_price_coins = 13;
   int32 next_level_price_cards = 14;
   int32 rarity = 15;
+  int32 size = 16;
 }

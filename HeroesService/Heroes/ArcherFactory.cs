@@ -4,7 +4,7 @@ namespace HeroesService.Heroes;
 
 public class ArcherFactory: IHeroFactory
 {
-    public HeroResponseDto BuildHero(int level)
+    public HeroResponseDto BuildHero(int level, int id)
     {
         return new HeroResponseDto
         {
@@ -22,7 +22,8 @@ public class ArcherFactory: IHeroFactory
             Description = "Hit some ones face till arrow",
             NextLevelPriceCoins = 9,
             NextLevelPriceCards = 11,
-            Rarity = 1
+            Rarity = 1,
+            Size = 1
         };
     }
 }
