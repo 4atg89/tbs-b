@@ -17,7 +17,7 @@ public class GhostFactory : IHeroFactory
             Defense = 4,
             AttackRange = 150,
             Evasion = 110,
-            Image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThTxG3RDV98g63Ujjqst0LvYej8cywueL_RSnq5ku4ft_vMeNXOb0se6gjeeZrbqdZqE4&usqp=CAU",
+            Image = "https://static.vecteezy.com/system/resources/thumbnails/050/615/820/small_2x/a-ghostly-figure-in-a-white-ghost-costume-with-a-black-background-video.jpg",
             DescriptionTitle = "Spell",
             Description = "Hit some ones face till spell",
             NextLevelPriceCoins = 8,

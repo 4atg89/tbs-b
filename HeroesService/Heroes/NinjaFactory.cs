@@ -17,7 +17,7 @@ public class NinjaFactory : IHeroFactory
             Defense = 110,
             AttackRange = 40,
             Evasion = 120,
-            Image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThTxG3RDV98g63Ujjqst0LvYej8cywueL_RSnq5ku4ft_vMeNXOb0se6gjeeZrbqdZqE4&usqp=CAU",
+            Image = "https://img.poki-cdn.com/cdn-cgi/image/quality=78,width=1200,height=1200,fit=cover,f=png/b66cf5d2ede0b1e41b5dfa79dd355f5f.png",
             DescriptionTitle = "Stealth",
             Description = "Hit some ones face till stealth",
             NextLevelPriceCoins = 10,

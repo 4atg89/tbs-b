@@ -26,4 +26,6 @@ internal class HeroFactory : IHeroFactory
     {
         return GetFactory(id).BuildHero(level, id);
     }
+
+    internal static int MaxId = 10;
 }

@@ -17,7 +17,7 @@ public class MaskosFactory : IHeroFactory
             Defense = 4,
             AttackRange = 150,
             Evasion = 110,
-            Image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThTxG3RDV98g63Ujjqst0LvYej8cywueL_RSnq5ku4ft_vMeNXOb0se6gjeeZrbqdZqE4&usqp=CAU",
+            Image = "https://static.wikia.nocookie.net/the-mask/images/d/df/The_Mask_of_Loki.jpg/revision/latest/scale-to-width-down/373?cb=20120918222714",
             DescriptionTitle = "Spell",
             Description = "Hit some ones face till spell",
             NextLevelPriceCoins = 8,

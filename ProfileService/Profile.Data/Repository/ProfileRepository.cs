@@ -51,17 +51,29 @@ internal class ProfileRepository(
         };
 
         var response = await _heroesClient.GetHeroesAsync(request);
-        var responseDict = response.Heroes.ToDictionary(h => h.HeroId);
+        var localDict = heroes.ToDictionary(h => h.HeroId);
 
-        foreach (var hero in heroes)
-        {
-            if (responseDict.TryGetValue(hero.HeroId, out var matching))
+        var result = response.Heroes
+            .Select(serverHero =>
             {
-                hero.Image = matching.Image;
-                hero.NextLevelPriceCoins = matching.NextLevelPriceCoins;
-            }
-        }
+                if (localDict.TryGetValue(serverHero.HeroId, out var existing))
+                {
+                    return serverHero.MapHeroesModel(existing);
+                }
+                else
+                {
+                    return HeroesModel.DefaultEmptyHero(
+                        id: serverHero.HeroId,
+                        image: serverHero.Image,
+                        name: serverHero.Name,
+                        description: serverHero.Description,
+                        descriptionTitle: serverHero.DescriptionTitle
+                    );
+                }
+            })
+            .ToList();
 
-        return heroes;
+        return result;
     }
+
 }

@@ -32,9 +32,22 @@ public class HeroesResponse
 {
     public required int HeroId { get; set; }
     public required int Level { get; set; }
-    public required int CardsAmount { get; set; }
+    public required int HeroCards { get; set; }
+    public int Damage { get; set; }
+    public int Health { get; set; }
+    public int Speed { get; set; }
+    public int Weight { get; set; }
+    public int Defense { get; set; }
+    public int AttackRange { get; set; }
+    public int Evasion { get; set; }
     public string? Image { get; set; }
+    public string? Name { get; set; }
+    public string? DescriptionTitle { get; set; }
+    public string? Description { get; set; }
     public int? NextLevelPriceCoins { get; set; }
+    public int? NextLevelPriceCards { get; set; }
+    public int? Rarity { get; set; }
+    public int? Size { get; set; }
 }
 
 public class ProfileHandHeroesResponse
