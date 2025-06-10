@@ -32,7 +32,8 @@ internal class ProfileRepository(
                 .Include(p => p.Heroes)
                 .Include(p => p.HandHeroes).FirstOrDefaultAsync(p => p.Id == id)
             )?.MapProfile();
-            profile!.Heroes = await GetHeroes(profile.Heroes!);
+            if (profile == null) return null;
+            profile.Heroes = await GetHeroes(profile.Heroes!);
             return profile;
         });
 
