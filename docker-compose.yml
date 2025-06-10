@@ -9,7 +9,7 @@ services:
       - "3310:3306"
     volumes:
       - tbs_data:/var/lib/mysql
-      - ./mysql-init:/docker-entrypoint-initdb.d
+      - ./initials/mysql:/docker-entrypoint-initdb.d
     networks:
       - backend
 
@@ -41,8 +41,8 @@ services:
       RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: "-rabbitmq_management load_definitions \"/etc/rabbitmq/definitions.json\""
     volumes:
       - tbs_rabbitmq_data:/var/lib/rabbitmq
-      - ./rabbitmq-init/definitions.json:/etc/rabbitmq/definitions.json
-      - ./rabbitmq-init/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./initials/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+      - ./initials/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
 
   tbs-b-auth-service:
     build:
@@ -54,7 +54,7 @@ services:
       - tbs-b-redis
       - tbs-b-rabbitmq
     ports:
-      - "5030:5030"
+      - "5030:80"
     networks:
       - backend
     environment:
@@ -82,6 +82,18 @@ services:
       - RabbitMQ__UserName=${TBS_RABBIT_MQ_USER_NOTIFICATION}
       - RabbitMQ__Password=${TBS_RABBIT_MQ_PASSWORD_NOTIFICATION}
       - RabbitMQ__VirtualHost=notifications
+
+  tbs-b-nginx:
+    image: nginx:latest
+    container_name: tbs-b-nginx
+    volumes:
+      - ./initials/nginx:/etc/nginx/conf.d
+    ports:
+      - "80:80"
+    depends_on:
+      - tbs-b-auth-service
+    networks:
+      - backend
 
 volumes:
   tbs_data:
