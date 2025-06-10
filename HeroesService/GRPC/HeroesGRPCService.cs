@@ -10,13 +10,17 @@ public class HeroesGRPCService : HeroService.HeroServiceBase
     private IHeroFactory factory = new HeroFactory();
     public override Task<HeroesResponse> GetHeroes(HeroesRequest request, ServerCallContext context)
     {
-        foreach (var item in request.Heroes)
-        {
-            Console.WriteLine($"response => {item.HeroId} {item.Level}");
-        }
+        var heroMap = request.Heroes.ToDictionary(h => h.HeroId, h => h.Level);
+
         return Task.FromResult(new HeroesResponse
         {
-            Heroes = { request.Heroes.Select(h => factory.BuildHero(h.Level, h.HeroId)) }
+            Heroes = { Enumerable.Range(1, HeroFactory.MaxId)
+                                 .Select(i =>
+                                    {
+                                        heroMap.TryGetValue(i, out var level);
+                                        return factory.BuildHero(level, i);
+                                     })
+                    }
         });
     }
 

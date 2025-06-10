@@ -12,9 +12,22 @@ internal static class HeroesExtensions
         {
             HeroId = model.HeroId,
             Level = model.Level,
-            CardsAmount = model.CardsAmount,
+            HeroCards = model.HeroCards,
+            Damage = model.Damage,
+            Health = model.Health,
+            Speed = model.Speed,
+            Weight = model.Weight,
+            Defense = model.Defense,
+            AttackRange = model.AttackRange,
+            Evasion = model.Evasion,
             Image = model.Image,
-            NextLevelPriceCoins = model.NextLevelPriceCoins
+            Name = model.Name,
+            Description = model.Description,
+            DescriptionTitle = model.DescriptionTitle,
+            NextLevelPriceCoins = model.NextLevelPriceCoins,
+            NextLevelPriceCards = model.NextLevelPriceCards,
+            Rarity = model.Rarity,
+            Size = model.Size
         };
 
 }
