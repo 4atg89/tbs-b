@@ -1,29 +1,34 @@
-using HeroesService.Grpc;
-
 namespace HeroesService.Heroes;
 
-public class KungFuFactory: IHeroFactory
+public class KungFuFactory : BaseHeroFactory
 {
-    public HeroResponseDto BuildHero(int level, int id)
+    protected override HeroStats BaseStats => new()
     {
-        return new HeroResponseDto
-        {
-            HeroId = 5,
-            Name = "KungFu",
-            Damage = 20,
-            Health = 45,
-            Speed = 30,
-            Weight = 50,
-            Defense = 4,
-            AttackRange = 150,
-            Evasion = 110,
-            Image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcaRj8tSnoQjW8nkL5kbOWvMkxEa3PqKmBNQ&s",
-            DescriptionTitle = "Spell",
-            Description = "Hit some ones face till spell",
-            NextLevelPriceCoins = 8,
-            NextLevelPriceCards = 15,
-            Rarity = 1,
-            Size = 1
-        };
-    }
+        Damage = 25,
+        Health = 45,
+        Speed = 60,
+        Weight = 50,
+        Defense = 4,
+        AttackRange = 150,
+        Evasion = 110
+    };
+
+    protected override HeroStats GrowthPerLevel => new()
+    {
+        Damage = 3,
+        Health = 6,
+        Speed = 2,
+        Weight = 1,
+        Defense = 2,
+        AttackRange = 2,
+        Evasion = 3
+    };
+
+    protected override string Name => "KungFu";
+    protected override string Image => "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcaRj8tSnoQjW8nkL5kbOWvMkxEa3PqKmBNQ&s";
+    protected override string DescriptionTitle => "Spell";
+    protected override string Description => "Hit some ones face till spell";
+    protected override int HeroId => 5;
+    protected override int Rarity => 1;
+    protected override int Size => 1;
 }
