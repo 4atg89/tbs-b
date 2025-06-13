@@ -43,6 +43,12 @@ services:
       - tbs_rabbitmq_data:/var/lib/rabbitmq
       - ./initials/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
       - ./initials/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   tbs-b-auth-service:
     build:
@@ -73,7 +79,8 @@ services:
       dockerfile: NotificationService/Dockerfile
     container_name: tbs-b-notification-service
     depends_on:
-      - tbs-b-rabbitmq
+      tbs-b-rabbitmq:
+        condition: service_healthy
     networks:
       - backend
     environment:
@@ -82,6 +89,7 @@ services:
       - RabbitMQ__UserName=${TBS_RABBIT_MQ_USER_NOTIFICATION}
       - RabbitMQ__Password=${TBS_RABBIT_MQ_PASSWORD_NOTIFICATION}
       - RabbitMQ__VirtualHost=notifications
+    restart: unless-stopped
 
   tbs-b-nginx:
     image: nginx:latest
