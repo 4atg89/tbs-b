@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Shared.RabbitMQ.Connection;
 using Shared.RabbitMQ.Consumer;
 using Shared.RabbitMQ.Producer;
@@ -15,10 +16,10 @@ public static class ServiceCollectionExtensions
         section.Bind(options);
         services.Configure<RabbitMqOptions>(section);
 
-        services.AddSingleton<IRabbitMqConnectionManager>(sp => new RabbitMqConnectionManager(options));
+        services.AddSingleton<IRabbitMqConnectionManager>(sp => 
+            new RabbitMqConnectionManager(options, sp.GetRequiredService<ILogger<RabbitMqConnectionManager>>()));
 
         services.AddSingleton<IRabbitMqProducer, RabbitMqProducer>();
-
         services.AddSingleton<IRabbitMqConsumer, RabbitMqConsumer>();
 
         return services;

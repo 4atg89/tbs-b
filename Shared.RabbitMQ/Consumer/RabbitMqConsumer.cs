@@ -16,27 +16,40 @@ internal class RabbitMqConsumer : IRabbitMqConsumer
 
     public async Task Subscribe(string exchange, string queue, string routingKey, Action<string> onMessageReceived)
     {
-        var channel = await _connectionManager.CreateChannelAsync();
-
-        //todo remove or check somewhere else place
-        await channel.ExchangeDeclareAsync(exchange: exchange, type: ExchangeType.Direct, durable: true);
-
-        await channel.QueueDeclareAsync(queue: queue, durable: true, exclusive: false, autoDelete: false);
-
-        await channel.QueueBindAsync(queue: queue, exchange: exchange, routingKey: routingKey);
-
-        var consumer = new AsyncEventingBasicConsumer(channel);
-
-        consumer.ReceivedAsync += async (sender, args) =>
+        try
         {
-            var body = args.Body.ToArray();
-            var message = Encoding.UTF8.GetString(body);
-            onMessageReceived(message);
-            await Task.Yield();
-        };
+            var channel = await _connectionManager.CreateChannelAsync();
 
-        string consumerTag = await channel.BasicConsumeAsync(queue, false, consumer);
+            await channel.ExchangeDeclareAsync(exchange: exchange, type: ExchangeType.Direct, durable: true);
 
-        await channel.BasicConsumeAsync(queue: queue, autoAck: true, consumer: consumer);
+            await channel.QueueDeclareAsync(queue: queue, durable: true, exclusive: false, autoDelete: false);
+
+            await channel.QueueBindAsync(queue: queue, exchange: exchange, routingKey: routingKey);
+
+            var consumer = new AsyncEventingBasicConsumer(channel);
+
+            consumer.ReceivedAsync += async (sender, args) =>
+            {
+                try
+                {
+                    var body = args.Body.ToArray();
+                    var message = Encoding.UTF8.GetString(body);
+                    
+                    onMessageReceived(message);
+                    
+                    await channel.BasicAckAsync(args.DeliveryTag, false);
+                }
+                catch (Exception ex)
+                {
+                    await channel.BasicNackAsync(args.DeliveryTag, false, true);
+                }
+            };
+
+            await channel.BasicConsumeAsync(queue: queue, autoAck: false, consumer: consumer);
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
     }
 }
