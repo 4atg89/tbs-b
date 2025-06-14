@@ -1,8 +1,8 @@
 using HeroesService.Grpc;
 using Microsoft.EntityFrameworkCore;
 using Profile.Data.Data;
-using Profile.Data.Data.Entities;
 using Profile.Data.Extensions;
+using Profile.Domain;
 using Profile.Domain.Model;
 using Profile.Domain.Repository;
 
@@ -10,7 +10,7 @@ namespace Profile.Data.Repository;
 
 internal class ProfileRepository(
     IDbContextFactory<ProfileDbContext> dbContextFactory,
-    HeroService.HeroServiceClient _heroesClient) : IProfileRepository
+    HeroService.HeroServiceClient _heroesClient) : IProfileRepository, IHeroService
 {
 
     private async Task<T> ExecuteAsync<T>(Func<ProfileDbContext, Task<T>> action)
@@ -28,13 +28,10 @@ internal class ProfileRepository(
     public async Task<ProfileModel?> GetProfile(Guid id) =>
         await ExecuteAsync(async context =>
         {
-            var profile = (await context.Profiles
+            return (await context.Profiles
                 .Include(p => p.Heroes)
                 .Include(p => p.HandHeroes).FirstOrDefaultAsync(p => p.Id == id)
             )?.MapProfile();
-            if (profile == null) return null;
-            profile.Heroes = await GetHeroes(profile.Heroes!);
-            return profile;
         });
 
     public async Task<ProfileModel> SaveProfile(ProfileModel profile) => await ExecuteAsync(async context =>
@@ -44,7 +41,17 @@ internal class ProfileRepository(
         return profile;
     });
 
-    private async Task<List<HeroesModel>> GetHeroes(List<HeroesModel> heroes)
+
+    public async Task<bool> ChangeNickname(Guid userId, string newNickname) => await ExecuteAsync(async context =>
+    {
+        var profile = await context.Profiles.FindAsync(userId);
+        //todo is not finished need to sync with auth
+        profile.Nickname = newNickname;
+        await context.SaveChangesAsync();
+        return true;
+    });
+
+    public async Task<List<HeroesModel>> GetHeroesDetails(List<HeroesModel> heroes)
     {
         var request = new HeroesRequest
         {
