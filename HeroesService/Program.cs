@@ -11,7 +11,7 @@ builder.Services.AddOpenApi();
 
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.ListenLocalhost(5032, listenOptions =>
+    options.ListenAnyIP(80, listenOptions =>
     {
         listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
     });
@@ -25,6 +25,7 @@ builder.Services.AddApiVersioning(options =>
 {
     options.DefaultApiVersion = new ApiVersion(1, 0);
     options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
 });
 
 builder.Services.AddGrpc();
@@ -38,6 +39,7 @@ if (app.Environment.IsDevelopment())
 }
 
 // app.UseHttpsRedirection();
-app.MapHeroesApi();
 app.MapGrpcService<HeroesGRPCService>();
+app.MapHeroesApi();
+
 app.Run();

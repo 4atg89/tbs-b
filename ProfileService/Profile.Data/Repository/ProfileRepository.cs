@@ -5,12 +5,13 @@ using Profile.Data.Extensions;
 using Profile.Domain;
 using Profile.Domain.Model;
 using Profile.Domain.Repository;
+using Grpc.Net.Client;
 
 namespace Profile.Data.Repository;
 
 internal class ProfileRepository(
     IDbContextFactory<ProfileDbContext> dbContextFactory,
-    HeroService.HeroServiceClient _heroesClient) : IProfileRepository, IHeroService
+    GrpcChannel grpcChannel) : IProfileRepository, IHeroService
 {
 
     private async Task<T> ExecuteAsync<T>(Func<ProfileDbContext, Task<T>> action)
@@ -53,12 +54,13 @@ internal class ProfileRepository(
 
     public async Task<List<HeroesModel>> GetHeroesDetails(List<HeroesModel> heroes)
     {
+        var client = new HeroService.HeroServiceClient(grpcChannel);
         var request = new HeroesRequest
         {
             Heroes = { heroes.Select(h => new HeroRequestDto { HeroId = h.HeroId, Level = h.Level }) }
         };
 
-        var response = await _heroesClient.GetHeroesAsync(request);
+        var response = await client.GetHeroesAsync(request);
         var localDict = heroes.ToDictionary(h => h.HeroId);
 
         var result = response.Heroes

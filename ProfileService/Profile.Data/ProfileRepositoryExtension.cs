@@ -5,6 +5,7 @@ using Profile.Data.Data;
 using Profile.Data.Repository;
 using Profile.Domain;
 using Profile.Domain.Repository;
+using Grpc.Net.Client;
 
 namespace Profile.Data;
 
@@ -26,10 +27,9 @@ public static class ProfileRepositoryExtension
             options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
         });
 
-        services.AddGrpcClient<HeroesService.Grpc.HeroService.HeroServiceClient>(o =>
-        {
-            o.Address = new Uri("http://localhost:5032");
-        });
+        var channel = GrpcChannel.ForAddress("http://tbs-b-heroes-service:80");
+        services.AddSingleton(channel);
+        
         return services;
     }
 }
