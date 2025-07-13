@@ -65,7 +65,7 @@ services:
       - backend
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:5030
+      - ASPNETCORE_URLS=http://+:80
       - ConnectionStrings__DefaultConnection=${TBS_DB_AUTH_CONNECTION_STRING}
       - ConnectionStrings__Redis=${TBS_DB_REDIS}
       - RabbitMQ__HostName=tbs-b-rabbitmq
@@ -91,6 +91,39 @@ services:
       - RabbitMQ__VirtualHost=notifications
     restart: unless-stopped
 
+  tbs-b-profile-service:
+    build:
+      context: .
+      dockerfile: ProfileService/Dockerfile
+      platforms:
+        - linux/amd64
+    container_name: tbs-b-profile-service
+    depends_on:
+      - tbs-b-db
+    ports:
+      - "5031:80"
+    networks:
+      - backend
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=${TBS_DB_PROFILE_CONNECTION_STRING}
+
+  tbs-b-heroes-service:
+    build:
+      context: .
+      dockerfile: HeroesService/Dockerfile
+      platforms:
+        - linux/amd64
+    container_name: tbs-b-heroes-service
+    ports:
+      - "5032:80"
+    networks:
+      - backend
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+
   tbs-b-nginx:
     image: nginx:latest
     container_name: tbs-b-nginx
@@ -100,6 +133,8 @@ services:
       - "80:80"
     depends_on:
       - tbs-b-auth-service
+      - tbs-b-profile-service
+      - tbs-b-heroes-service
     networks:
       - backend
 

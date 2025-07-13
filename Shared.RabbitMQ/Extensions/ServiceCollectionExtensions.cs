@@ -20,7 +20,8 @@ public static class ServiceCollectionExtensions
             new RabbitMqConnectionManager(options, sp.GetRequiredService<ILogger<RabbitMqConnectionManager>>()));
 
         services.AddSingleton<IRabbitMqProducer, RabbitMqProducer>();
-        services.AddSingleton<IRabbitMqConsumer, RabbitMqConsumer>();
+        services.AddSingleton<IRabbitMqConsumer>(sp => 
+            new RabbitMqConsumer(sp.GetRequiredService<IRabbitMqConnectionManager>(), sp.GetRequiredService<ILogger<RabbitMqConsumer>>()));
 
         return services;
     }
